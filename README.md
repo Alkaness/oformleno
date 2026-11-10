@@ -57,8 +57,7 @@ uv pip compile pyproject.toml --group dev --python-platform x86_64-unknown-linux
 ```
 
 Для іншої ОС залежності потрібно розв'язати для її платформи; наведений
-lock-файл перевірено лише для Linux x86_64. У поточному середовищі універсальне
-розв'язання залежностей недоступне через неповний офлайн-кеш метаданих.
+lock-файл перевірено лише для Linux x86_64.
 
 ## Working with Codex
 
@@ -84,6 +83,10 @@ staged `.docx`/`.doc` files and runs checks. Use the user-selected
 ```bash
 gh run list --repo Alkaness/oformleno --branch 001-mvp-checker --limit 3
 ```
+
+Підготовку T001 завершено 10.11.2026. [Перший успішний запуск CI](https://github.com/Alkaness/oformleno/actions/runs/42828269775)
+перевірив встановлення Python-пакета, заборону документів у Git, Ruff,
+форматування та pytest. Локально ті самі перевірки дали **6 passed**.
 
 Для нового checkout налаштувати локальний Git hook:
 

@@ -1,7 +1,7 @@
 # Current user decisions
 
-- User authorized **Codex for T001 and AI setup**. T001 is still incomplete;
-  stop after completing it. T002 has no tool approval.
+- User authorized **Codex for T001 and AI setup**. **T001 is complete**;
+  stop and ask which tool to use for T002. T002 has no tool approval.
 - GitHub target: `Alkaness/oformleno`, **Private**, accessible only to user.
   Do not invite collaborators; this refines the original T001 requirements.
 - Design and mockups: Figma through `/home/eugen/claude-talk-to-figma-mcp`.
@@ -17,10 +17,17 @@
   metadata writes and required GitHub/network commands.
 - GitHub access works in approved commands. Codex verified the repository is
   private, collaborators list contains only `Alkaness`, and no invitations are pending.
-- `origin` points to `https://github.com/Alkaness/oformleno.git`. The remote
-  repository is empty; the local branch is `001-mvp-checker`.
-- Next: commit and push the scaffold, then verify GitHub Actions. Mark T001
-  complete only after all its requirements and actual CI success are verified.
+- `origin` points to `https://github.com/Alkaness/oformleno.git`. The local branch
+  `001-mvp-checker` tracks `origin/001-mvp-checker`.
+
+## T001 completion evidence (2026-11-10)
+
+- Scaffold commit: `b87c55694bf96e605d378f9ea1b427d20c344da1`, pushed to GitHub.
+- CI: https://github.com/Alkaness/oformleno/actions/runs/42828269775 — success.
+  Every step passed, including dependency installation, document guard, and checks.
+- The installed Git hook ran successfully during the commit: Ruff, formatting,
+  and **6 pytest tests** passed. No student documents or local secrets were committed.
+- T001 is checked in `tasks.md`. No later task has started.
 
 ## Verified AI setup and local checks
 
