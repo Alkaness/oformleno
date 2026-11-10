@@ -1,0 +1,19 @@
+{
+  "description": "Restore Oformleno task context without reading student documents or making external requests.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "^(startup|resume|clear|compact|fork)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/tools/ai/session_start.py\"",
+            "timeout": 5,
+            "statusMessage": "Restoring Oformleno task context",
+            "additionalContextLimit": 2000
+          }
+        ]
+      }
+    ]
+  }
+}

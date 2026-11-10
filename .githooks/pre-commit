@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+
+cd "$(git rev-parse --show-toplevel)"
+uv run --no-sync python scripts/check_documents.py --tracked
+exec sh scripts/check.sh

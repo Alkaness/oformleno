@@ -1,0 +1,31 @@
+# Локальне середовище та результати перевірок
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+.cache/
+
+# Роботи й згенеровані фікстури: створювати лише локально
+*.[dD][oO][cC][xX]
+*.[dD][oO][cC]
+private/
+tmp/
+
+# Локальні налаштування та секрети
+.env
+.env.*
+!.env.example
+.aws/
+.DS_Store
+.idea/
+.vscode/
+
+# Локальні копії AI-конфігурації; джерела — tools/ai/
+.agents/
+.codex/

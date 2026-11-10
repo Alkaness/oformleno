@@ -1,0 +1,82 @@
+id: lpnu-afm-kontrolna-2025
+title: "Контрольна робота, ТРС, кафедра адміністративного та фінансового менеджменту, НУ «Львівська політехніка» (2025)"
+source: "Методичні вказівки до виконання контрольної роботи, розділ «Вимоги до оформлення контрольної роботи»"
+tolerance_mm: 0.5
+
+structural_headings:
+  - ЗМІСТ
+  - ВСТУП
+  - ОСНОВНА ЧАСТИНА
+  - ВИСНОВКИ
+  - СПИСОК ВИКОРИСТАНИХ ДЖЕРЕЛ
+  - ДОДАТКИ
+
+rules:
+  - id: R01
+    name: Формат сторінки
+    params: {width_mm: 210, height_mm: 297}
+    severity: error
+    autofix: true
+    quote: "…друкують на одному боці аркуша білого паперу формату А4 (210 х 297 мм)"
+
+  - id: R02
+    name: Поля
+    params: {left_mm: 20, top_mm: 20, bottom_mm: 20, right_mm: 15}
+    severity: error
+    autofix: true
+    quote: "…поля таких розмірів: ліве, верхнє, нижнє – 20 мм, праве – 15 мм"
+
+  - id: R03
+    name: Шрифт основного тексту
+    params: {font: Times New Roman}
+    severity: error
+    autofix: true
+    quote: "…з використанням шрифту Times New Roman"
+
+  - id: R04
+    name: Розмір шрифту
+    params: {size_pt: 14}
+    severity: error
+    autofix: true
+    quote: "…розміру 14"
+
+  - id: R05
+    name: Міжрядковий інтервал
+    params: {line_spacing: 1.5}
+    severity: error
+    autofix: true
+    quote: "…з полуторним міжрядковим інтервалом"
+
+  - id: R06
+    name: Заголовки структурних частин
+    params: {uppercase: true, align: center, trailing_period: false}
+    severity: error
+    autofix: true
+    quote: "Заголовки структурних частин … друкують великими літерами симетрично до тексту. … Крапку в кінці заголовка не ставлять."
+
+  - id: R07
+    name: Структурна частина з нової сторінки
+    severity: warning
+    autofix: false
+    quote: "Кожну структурну частину … починають з нової сторінки."
+
+  - id: R08
+    name: Підписи рисунків
+    params: {pattern: '^Рис\. ?\d+\. ?\d+', position: below}
+    severity: error
+    autofix: false
+    quote: "Ілюстрації позначають словом «Рис.» і нумерують послідовно в межах розділу. … Номер ілюстрації, її назва … розміщують послідовно під ілюстрацією."
+
+  - id: R09
+    name: Підписи таблиць
+    params: {pattern: '^Таблиця \d+\.\d+', position: above, align: right}
+    severity: error
+    autofix: false
+    quote: "У правому верхньому куті над відповідним заголовком таблиці розміщують напис «Таблиця» із зазначенням її номера."
+
+  - id: R10
+    name: Нумерація сторінок
+    params: {position: top-right, title_page_numbered: false}
+    severity: warning
+    autofix: false
+    quote: "…титульний аркуш … не проставляючи його номера. Наступні сторінки нумерують у правому верхньому куті сторінки без крапки в кінці."
