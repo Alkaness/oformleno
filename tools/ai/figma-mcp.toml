@@ -1,0 +1,11 @@
+# Project-scoped Codex MCP configuration. Link as .codex/config.toml.
+# Use the selected checkout; do not replace it with a similarly named npm server.
+[mcp_servers.TalkToFigma]
+command = "/home/eugen/.nvm/versions/node/v22.19.0/bin/node"
+args = ["/home/eugen/claude-talk-to-figma-mcp/dist/talk_to_figma_mcp/server.js"]
+cwd = "/home/eugen/oformleno"
+startup_timeout_sec = 30
+tool_timeout_sec = 660
+
+[mcp_servers.TalkToFigma.env]
+LOG_LEVEL = "warn"

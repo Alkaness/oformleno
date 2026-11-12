@@ -1,0 +1,11 @@
+interface:
+  display_name: "Oformleno Figma Design"
+  short_description: "Design Oformleno in Figma with its local MCP"
+  default_prompt: "Use $oformleno-figma-design to inspect the connected Figma file and complete the authorized design work."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "TalkToFigma"
+      description: "Selected local Talk to Figma stdio server; project setup is documented in this skill."
+policy:
+  allow_implicit_invocation: true

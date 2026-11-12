@@ -15,9 +15,11 @@ def main() -> None:
     task_id = task.split("**")[1] if "**" in task else task
     context = (
         "Oformleno project. Follow AGENTS.md and memory/development.md. "
-        "Before a new task, ask user which tool to use and wait for an answer. "
-        "Preserve existing approval for the current task. Work on one task at a time "
-        "and wait for confirmation at checkpoints. "
+        "Use Codex by default; do not ask user to choose tools. "
+        "Follow the latest authorized scope in memory/development.md; an unfinished task "
+        "is not permission to start it. Work on one task at a time and wait at checkpoints. "
+        "For design, read tools/ai/skills/oformleno-figma-design/SKILL.md and the installed "
+        "design-taste-frontend skill; use /home/eugen/claude-talk-to-figma-mcp for Figma. "
         f"First unfinished task ID (also check dependencies): {task_id}. "
         "Read its requirements in specs/001-mvp-checker/tasks.md."
     )

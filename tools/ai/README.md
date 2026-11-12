@@ -1,6 +1,21 @@
 # Project AI setup
 
-`AGENTS.md` defines repository instructions and per-task authorization.
+`AGENTS.md` defines repository instructions and task boundaries. The standing
+user choices are Codex for project work and the existing local `TalkToFigma`
+MCP at `/home/eugen/claude-talk-to-figma-mcp` for Figma. Do not ask user to pick
+an AI tool or Figma connector again. Older tool-choice prompts in project
+documents, skills or historical memory are superseded. This applies to the main
+agent and sub-agents. Checkpoint confirmation and explicit scope/holds still apply.
+
+User approved a standing mixed-model workflow on 2026-11-12. Within an already
+authorized task, use GPT-6.1 Sol for coordination/implementation, GPT-6 Luna for
+focused exploration, and GPT-6.1 Sol for independent review where useful. The main
+agent owns edits and final verification; exploration/review agents return findings
+without editing files or Figma. Keep one Figma writer. Small tasks can stay with
+one agent. No separate delegation approval is needed. See
+[`AGENTS.md`](../../AGENTS.md#agent-orchestration) for the policy, model fallbacks
+and task/checkpoint boundaries.
+
 `memory/development.md` records current user decisions. The focused rule skill
 lives at `skills/oformleno-rule/SKILL.md`. AGENTS.md links directly to it, so an
 agent can read it before automatic skill discovery is activated.
@@ -51,9 +66,55 @@ Official references: [skills](https://learn.chatgpt.com/docs/build-skills),
 [hooks](https://learn.chatgpt.com/docs/hooks),
 [AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
 
-## Figma
+## Design skills and Figma
 
-User selected `/home/eugen/claude-talk-to-figma-mcp` for design and mockups.
-Connection setup and Figma work belong to separately authorized T014a. Read
-that tool's README and INSTALLATION.md before connecting. Use the selected local
-tool and attach the Figma file link to the task.
+User authorized the design-infrastructure setup on 2026-11-11, explicitly holding
+T014. T014a mockup creation is a separate deliverable and has not been started.
+For all visual design, UI styling, mockups, landing pages and design reviews, use:
+
+- Installed Taste Skill:
+  `.agents/skills/design-taste-frontend/SKILL.md`, from `Leonxlnx/taste-skill`.
+  `skills-lock.json` records its source/hash. Restore it in a fresh checkout with
+  `npx --yes skills add Leonxlnx/taste-skill --skill design-taste-frontend --agent codex --yes`.
+- Maintained project skill:
+  [oformleno-figma-design](skills/oformleno-figma-design/SKILL.md). Its references
+  cover connection/setup, actual tools/source paths, Figma editing and verification,
+  and applying Taste to the project's Ukrainian product requirements.
+
+The upstream skill is installed locally (about 40 MB), ignored with `.agents/`;
+the project skill, activation helper and MCP configuration source are maintained
+in this repository. An upstream reinstall can change the installed version/hash.
+Upstream's Claude Stop hook is not a Codex hook; frontend gates run explicitly
+when a browser implementation is actually authorized. Figma mockups use snapshots
+and their own truthful review evidence, not a claimed browser gate.
+
+Activate the maintained discovery link and project Codex MCP config:
+
+```bash
+python3 tools/ai/activate_design.py
+```
+
+It is idempotent, creates relative links to maintained sources, and refuses to
+overwrite existing unrelated skill/config files. Protected `.agents`/`.codex`
+writes can require sandbox approval. Existing configurations must be merged while
+preserving other settings. Restart Codex if its native MCP tool list does not
+refresh. Changing `session_start.py` can also require renewed hook trust in Codex.
+
+The selected MCP remains `/home/eugen/claude-talk-to-figma-mcp`; Codex starts its
+local `dist/talk_to_figma_mcp/server.js` using `tools/ai/figma-mcp.toml` linked as
+`.codex/config.toml`. The relay is a separate Bun process, and the Figma plugin
+must be imported from that same checkout and opened in the intended file.
+
+```bash
+node tools/ai/skills/oformleno-figma-design/scripts/figma.mjs status
+node tools/ai/skills/oformleno-figma-design/scripts/figma.mjs relay-start
+node tools/ai/skills/oformleno-figma-design/scripts/figma.mjs catalog
+node tools/ai/skills/oformleno-figma-design/scripts/figma.mjs probe
+```
+
+The helper never changes a Figma design. `relay-start` reuses a healthy relay or
+starts it on loopback, with PID/log files in ignored `tmp/figma-mcp/`. The other
+commands inspect status, actual MCP schemas, and read-only live connectivity.
+See the skill for exit codes and recovery. A running relay and initialized MCP
+do not prove the plugin is connected. Record the real Figma file/node link when
+the actual design task is completed; do not invent one from a page ID.

@@ -1,0 +1,74 @@
+/* Existing Figma checker system, adapted to native browser file controls. */
+[data-testid="stHeader"], [data-testid="stToolbar"] { display: none; }
+[data-testid="stMainBlockContainer"] { padding: 0; max-width: none; }
+/* A document report uses the page's scroll, including on narrow screens. */
+html, body, #root, .stApp { height: auto; min-height: 100vh; }
+.stApp, [data-testid="stAppViewContainer"] { position: static; overflow: visible; }
+[data-testid="stMain"] { overflow: visible; }
+#oformleno-root { color: #0f0f0f; background: #fff;
+  font: 16px/1.5 "Funnel Sans", system-ui, sans-serif; overflow-wrap: anywhere; }
+#oformleno-root * { box-sizing: border-box; }
+#oformleno-root .app-wrap { width: min(100% - 160px, 1280px); margin-inline: auto; }
+#oformleno-root .app-header { border-bottom: 1px solid #dcded9; }
+#oformleno-root .app-header .app-wrap { min-height: 72px; display: flex;
+  align-items: center; justify-content: space-between; gap: 24px; }
+#oformleno-root .app-wordmark { font: 24px/1.2 "Funnel Display", system-ui, sans-serif; }
+#oformleno-root .app-body { display: grid; grid-template-columns: minmax(0, 736fr) minmax(0, 416fr);
+  gap: 80px; padding-block: 56px 64px; }
+#oformleno-root h1, #oformleno-root h2 { font-weight: 400; line-height: 1.25; }
+#oformleno-root h1 { font-size: 40px; margin: 0 0 24px; letter-spacing: -.02em; }
+#oformleno-root h2 { font-size: 24px; margin: 0 0 24px; }
+#oformleno-root p { margin: 16px 0; }
+#oformleno-root .app-lead { font-size: 18px; }
+#oformleno-root .app-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  margin-block: 32px; }
+#oformleno-root .app-field-label, #oformleno-root .app-meta { color: #5f5f5f; font-size: 14px; }
+#oformleno-root .app-field-value { border: 1px solid #dcded9; border-radius: 8px;
+  padding: 16px; margin-top: 8px; }
+#oformleno-root .app-dropzone { border: 1px dashed #b6bab2; border-radius: 12px;
+  background: #f6f6f3; padding: 32px 24px; text-align: center; }
+#oformleno-root .app-dropzone.dragover { border-color: #0f0f0f; background: #edf6df; }
+#oformleno-root .app-file-type { font-size: 40px; margin: 0; }
+#oformleno-root .app-selected { white-space: pre-wrap; }
+#oformleno-root button, #oformleno-root .app-download { display: inline-flex;
+  align-items: center; justify-content: center; min-height: 48px; padding: 12px 24px;
+  font: 500 16px/1.5 "Funnel Sans", system-ui, sans-serif; border: 1px solid #0f0f0f;
+  border-radius: 8px; background: #0f0f0f; color: #fff; cursor: pointer;
+  text-decoration: none; transition: transform 150ms ease, background-color 150ms ease; }
+#oformleno-root button:hover:not(:disabled), #oformleno-root .app-download:hover {
+  transform: translateY(-1px); background: #292929; }
+#oformleno-root button:active:not(:disabled), #oformleno-root .app-download:active {
+  transform: translateY(1px); }
+#oformleno-root button:disabled { background: #e4e6e1; border-color: #e4e6e1;
+  color: #686c62; cursor: default; }
+#oformleno-root button:focus-visible, #oformleno-root a:focus-visible {
+  outline: 2px solid #0f0f0f; outline-offset: 4px; }
+#oformleno-root .app-check { margin-top: 32px; width: 100%; }
+#oformleno-root .app-skip { position: absolute; top: -100px; left: 24px;
+  padding: 12px 16px; background: #dafa9c; color: #0f0f0f; z-index: 10; }
+#oformleno-root .app-skip:focus { top: 8px; }
+#oformleno-root .app-reset { color: #5f5f5f; background: transparent; border-color: transparent;
+  font-size: 14px; padding-inline: 8px; }
+#oformleno-root .app-reset:hover { color: #0f0f0f; background: #f6f6f3 !important; }
+#oformleno-root .app-scope { padding: 0; list-style: none; margin: 24px 0 32px; }
+#oformleno-root .app-scope li { padding: 16px; border: 1px solid #dcded9;
+  border-radius: 8px; margin-bottom: 24px; }
+#oformleno-root .app-error { padding: 16px; color: #ab342b; background: #fff2ef;
+  border-radius: 8px; }
+#oformleno-root .app-ready { padding: 16px; color: #23613c; background: #edf6ef;
+  border-radius: 8px; }
+#oformleno-root .app-report-action { display: flex; flex-direction: column; gap: 16px;
+  margin-top: 24px; }
+#oformleno-root .app-report-action p { margin: 0; font-size: 14px; }
+@media (max-width: 1199px) { #oformleno-root .app-wrap { width: calc(100% - 96px); }
+  #oformleno-root .app-body { gap: 48px; } }
+@media (max-width: 1023px) { #oformleno-root .app-body { grid-template-columns: 1fr; gap: 48px; } }
+@media (max-width: 639px) { #oformleno-root .app-wrap { width: calc(100% - 48px); }
+  #oformleno-root .app-header .app-wrap { min-height: 64px; flex-wrap: wrap; padding-block: 8px; }
+  #oformleno-root .app-body { padding-block: 32px 48px; }
+  #oformleno-root h1 { font-size: 32px; }
+  #oformleno-root .app-fields { grid-template-columns: 1fr; gap: 16px; }
+  #oformleno-root .app-dropzone button { width: 100%; }
+  #oformleno-root .brand .wrap { flex-wrap: wrap; gap: 8px; padding-block: 8px; } }
+@media (prefers-reduced-motion: reduce) { #oformleno-root button,
+  #oformleno-root .app-download { transition: none; transform: none !important; } }

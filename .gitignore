@@ -21,6 +21,7 @@ tmp/
 .env
 .env.*
 !.env.example
+.streamlit/secrets.toml
 .aws/
 .DS_Store
 .idea/
@@ -29,3 +30,7 @@ tmp/
 # Локальні копії AI-конфігурації; джерела — tools/ai/
 .agents/
 .codex/
+
+# Local design checks and exports; source mockups live in Figma
+.taste-skill/
+figma-assets/

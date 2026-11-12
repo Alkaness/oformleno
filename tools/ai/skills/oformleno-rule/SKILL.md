@@ -7,7 +7,14 @@ description: Implement or fix an Oformleno formatting rule R01–R10 and its pyt
 
 Work only on rules included in the currently authorized task. Read `AGENTS.md`,
 the relevant acceptance criterion in `specs/001-mvp-checker/spec.md`, the technical
-note in `plan.md`, and the rule in `rulesets/lpnu-afm-kontrolna-2025.yaml`.
+note in `plan.md`, and the rule in `rulesets/lpnu-eom-styles-2026.yaml`.
+Read `specs/001-mvp-checker/eom-source-review.md` for source revisions,
+recorded user clarifications, and manual checks. The AFM ruleset is inactive.
+Respect `parameter_sources`: selected sample conventions are recorded user
+decisions, not quotations from the departmental guide. Keep unreliable results
+and applicable `manual_checks` as `manual`; do not turn them into automatic
+failures or fixes without reliable evaluation. User decisions may clarify the
+expected parameters, but do not establish that evaluation is reliable.
 
 Keep each rule in its own `src/oformleno/rules/rNN_*.py` file, with tests in
 `tests/test_rNN_*.py`. Read parameters and source quotations from the ruleset

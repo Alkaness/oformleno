@@ -1,0 +1,297 @@
+id: lpnu-eom-styles-2026
+title: "Оформлення друкованих робіт за стилями кафедри ЕОМ, НУ «Львівська політехніка» (2026)"
+status: reviewed
+source: "Методичні вказівки з оформлення друкованих документів на кафедрі ЕОМ і таблиця «Стилі кафедри ЕОМ»"
+source_review: specs/001-mvp-checker/eom-source-review.md
+sources:
+  - id: styles
+    file: "Стилі кафедри ЕОМ_20251004_1413=20260308_1556(1).doc"
+    sha256: 84d9b20824394f503eeb1a9249a626c4c02528aedccfe234d922be6f3d7ff587
+  - id: guide
+    file: "Методичні вказівки з оформлення друкованих текстів за стилями кафедри ЕОМ_20240212_2333=20260307_1205(1).doc"
+    sha256: 4a63736558b88632a685dac4af01da609d6d610843275741941730afaba1587d
+  - id: user_reference
+    kind: user_selected_example
+    description: "Лабораторна робота, обрана користувачем як зразок для уточнення нумерації, розташування підписів, відступів, розривів і відстаней колонтитулів. Персональні назви й текст роботи не зберігаються."
+    decision_date: "2026-11-10"
+# parameter_sources відокремлює уточнення користувача від цитат методички.
+profile_note: "Профіль MVP: вимоги ЕОМ з уточненнями за обраним користувачем зразком. Ці уточнення не видаються за загальні вимоги кафедри."
+applicability:
+  department: ЕОМ
+  document_types: [laboratory_report, qualification_thesis, other_printed_work]
+  note: "Загальні вимоги застосовуються до друкованих робіт кафедри ЕОМ; спеціальні вимоги до БКР/МКР не переносяться на лабораторні роботи."
+# Технічний допуск MVP; це не цитата і не окрема вимога методички.
+tolerance_mm: 0.5
+
+# Перелік визначає розпізнавання ролі, а не обов'язкову наявність усіх частин.
+structural_headings:
+  - ЗМІСТ
+  - ПЕРЕЛІК РИСУНКІВ
+  - ПЕРЕЛІК УМОВНИХ СКОРОЧЕНЬ
+  - ВСТУП
+  - ВИСНОВКИ
+  - СПИСОК ВИКОРИСТАНИХ ДЖЕРЕЛ
+
+rules:
+  - id: R01
+    name: Формат сторінки
+    params: {width_mm: 210, height_mm: 297}
+    severity: error
+    autofix: true
+    source_id: styles
+    source_location: "Параметри сторінки, розмір паперу"
+    quote: "A4, 21 x 29,7 см"
+
+  - id: R02
+    name: Поля
+    params: {left_mm: 25, top_mm: 20, bottom_mm: 20, right_mm: 15}
+    severity: error
+    autofix: true
+    source_id: styles
+    source_location: "Поля: верхнє, нижнє, ліве, праве"
+    quote: "2 см, 2 см, 2,5 см, 1,5 см,"
+
+  - id: R03
+    name: Шрифт основного тексту
+    params: {role: body, font: Times New Roman}
+    severity: error
+    autofix: true
+    source_id: styles
+    source_location: "Текст — ЕОМ: Основний"
+    quote: "Times New Roman 14"
+
+  - id: R04
+    name: Розмір шрифту основного тексту
+    params: {role: body, size_pt: 14}
+    severity: error
+    autofix: true
+    source_id: styles
+    source_location: "Текст — ЕОМ: Основний"
+    quote: "Times New Roman 14"
+
+  - id: R05
+    name: Міжрядковий інтервал основного тексту
+    params: {role: body, line_spacing: 1.5}
+    severity: error
+    autofix: true
+    source_id: styles
+    source_location: "Текст — ЕОМ: Основний"
+    quote: "Міжрядковий полуторний"
+
+  - id: R06
+    name: Оформлення заголовків структурних частин
+    params:
+      style: "ЕОМ: ЗАГ1 з нов. сторінки"
+      uppercase: true
+      align: justify
+      bold: true
+      font: Times New Roman
+      size_pt: 14
+      line_spacing: 1.5
+    severity: error
+    # Лише форматування впевнено розпізнаного заголовка; без перейменування стилю.
+    autofix: true
+    source_id: styles
+    source_location: "Вступ; також рядки Зміст, Перелік рисунків, Перелік умовних скорочень, Висновки, Список використаних джерел"
+    quote: |-
+      ЕОМ: ЗАГ1 з нов. сторінки
+      Вирівнювання – по ширині
+      Times New Roman 14
+      Усі великі
+      напівжирний
+      Міжрядковий полуторний
+
+  - id: R07
+    name: Початок структурної частини з нової сторінки
+    params: {style: "ЕОМ: ЗАГ1 з нов. сторінки", start_on_new_page: true}
+    parameter_sources: {start_on_new_page: user_reference}
+    severity: error
+    autofix: false
+    source_id: styles
+    source_location: "Вступ — назва обов'язкового стилю"
+    quote: "ЕОМ: ЗАГ1 з нов. сторінки"
+    manual_when: "Неможливо надійно встановити розрив сторінки або секції з урахуванням успадкування; сама назва стилю не доводить наявності розриву."
+
+  - id: R08
+    name: Номер та назва рисунка
+    params:
+      style: "ЕОМ: Назва рисунку"
+      label: Рис.
+      align: center
+      font: Times New Roman
+      size_pt: 12
+      italic: true
+      line_spacing: 1.5
+      position: below
+      numbering:
+        method: automatic_fields
+        format: chapter.ordinal
+        separator: "."
+        chapter_heading_level: 1
+        chapter_field: STYLEREF
+        sequence_field: SEQ
+        sequence_name: Рис.
+        reset_at_heading_level: 1
+        number_format: arabic
+    parameter_sources: {position: user_reference, numbering: user_reference}
+    severity: error
+    autofix: false
+    source_id: styles
+    source_location: "Номер та назва рисунку"
+    quote: |-
+      ЕОМ: Назва рисунку
+      Вирівнювання – по центру
+      Times New Roman 12 курсив
+      Міжрядковий полуторний
+      Назва для нумерації – Рис.
+    manual_when: "Неможливо надійно пов'язати рисунок і підпис, визначити розділ або розібрати поля нумерації; актуальність номера не доводиться лише кешем поля."
+
+  - id: R09
+    name: Номер і назва таблиці
+    params:
+      style: "ЕОМ: Назва таблиці"
+      label: Табл.
+      layout: combined_number_and_title
+      position: above
+      align: center
+      font: Times New Roman
+      size_pt: 14
+      bold: true
+      italic: true
+      line_spacing: 1.5
+      keep_with_next: true
+      numbering:
+        method: automatic_fields
+        format: chapter.ordinal
+        separator: "."
+        chapter_heading_level: 1
+        chapter_field: STYLEREF
+        sequence_field: SEQ
+        sequence_name: Табл.
+        reset_at_heading_level: 1
+        number_format: arabic
+    parameter_sources:
+      style: user_reference
+      label: user_reference
+      layout: user_reference
+      position: user_reference
+      numbering: user_reference
+    severity: error
+    autofix: false
+    source_id: styles
+    source_location: "Назва таблиці; вибір суміщеного номера й назви — за зразком користувача"
+    quote: |-
+      ЕОМ: Назва таблиці
+      Вирівнювання – по центру
+      Times New Roman 14 напівжирний курсив
+      Міжрядковий полуторний
+      Не відривати від наступного
+    manual_when: "Неможливо надійно пов'язати підпис і таблицю, визначити розділ або розібрати поля; інший макет підпису потребує ручної перевірки."
+
+  - id: R10
+    name: Верхній колонтитул і номер сторінки
+    params:
+      style: "ЕОМ: Номер сторінки"
+      position: top-right
+      first_page_header: absent
+      font: Times New Roman
+      size_pt: 12
+    severity: error
+    autofix: false
+    source_id: styles
+    source_location: "Верхній колонтитул першої сторінки; Верхній колонтитул, номер сторінки"
+    quote: |-
+      ЕОМ: Номер сторінки
+      Вирівнювання – праворуч
+      Times New Roman 12
+    supporting_quote: "немає"
+    manual_when: "Поля, успадкування колонтитулів або секції не дають надійно встановити нумерацію чи вигляд першої сторінки."
+
+# Обов'язковий ручний перелік MVP; це не реалізовані автоматичні правила.
+# Звіт має показувати кожен застосовний пункт як manual з цитатою і причиною.
+manual_checks:
+  - id: M01
+    name: Використання обов'язкових стилів Word
+    params:
+      prefix: "ЕОМ:"
+      localized_equivalent_names: true
+    severity: manual
+    source_id: guide
+    source_location: "Розділ 1 — Принципи використання стилів"
+    quote: "Усі друковані тексти на кафедрі ЕОМ повинні бути відформатовані за стилями MS Word."
+    manual_reason: "Треба звірити роль елемента, обов'язковий стиль і дозволені винятки; правильний вигляд без стилю не доводить відповідності ЕОМ."
+
+  - id: M02
+    name: Відступ і вирівнювання основного тексту
+    params: {indent_mm: 12.5, indent_type: first_line, align: justify}
+    parameter_sources: {indent_type: user_reference}
+    severity: manual
+    source_id: styles
+    source_location: "Текст — ЕОМ: Основний"
+    quote: |-
+      Відступ 1,25 см
+      Times New Roman 14
+      Міжрядковий полуторний
+      Вирівнювання – по ширині
+    manual_reason: "За вибором користувача це відступ першого рядка, як у зразку. Автоматична перевірка відступу й вирівнювання основного тексту поза R01–R10; у MVP перевіряється вручну."
+
+  - id: M03
+    name: Назва таблиці та текст у таблицях
+    params:
+      title: {align: center, font: Times New Roman, size_pt: 14, bold: true, italic: true}
+      cells: {font: Times New Roman, size_pt: 12, line_spacing: 1.0, header_bold: true}
+    severity: manual
+    source_id: styles
+    source_location: "Назва таблиці; Таблиця ліва; Таблиця центральна"
+    quote: "Times New Roman 12 напівжирний (шапка)"
+    supporting_quote: "Times New Roman 14 напівжирний курсив"
+    manual_reason: "Перевірки R03–R05 стосуються лише основного тексту; комірки й альтернативне оформлення окремого номера таблиці перевіряються вручну. Суміщений підпис обраного зразка покриває R09."
+
+  - id: M04
+    name: Автоматична нумерація та перехресні посилання
+    params:
+      targets: [headings, figures, tables, bibliography, appendices, contents]
+    severity: manual
+    source_id: guide
+    source_location: "Розділ 2, підрозділи 2.1–2.7"
+    quote: "Для автоматичної нумерації розділів з одним числом в номері необхідно набрати його назву в стилі Заголовок 1."
+    manual_reason: "Окрім локальних перевірок підписів R08–R09, треба вручну перевірити нумерацію, зміст, цілі та коректність перехресних посилань; кеш поля не доводить актуальності."
+
+  - id: M05
+    name: Подвійні пробіли та порожні рядки
+    severity: manual
+    source_id: styles
+    source_location: "Не повинно бути подвійних пробілів; Не повинно бути порожніх рядків"
+    quote: "Не повинно бути подвійних пробілів"
+    supporting_quote: "Не повинно бути порожніх рядків"
+    manual_reason: "У MVP немає окремої автоматичної перевірки цих вимог; потрібний ручний перегляд без видалення вмісту."
+
+  - id: M06
+    name: Обсяг кваліфікаційної роботи
+    applies_to: [qualification_thesis]
+    params: {min_full_pages: 60, max_full_pages: 100}
+    severity: manual
+    source_id: styles
+    source_location: "Кількість сторінок БКР та МКР"
+    quote: |-
+      Не менше 60 повних сторінок,
+      не більше 100 повних сторінок
+    manual_reason: "Стосується лише БКР/МКР; кількість повних сторінок потребує візуалізації. Для лабораторних робіт цей пункт не застосовується."
+
+  - id: M07
+    name: Відстані колонтитулів від країв сторінки
+    params: {header_distance_mm: 12.5, footer_distance_mm: 12.5, measurement: page_edge}
+    parameter_sources: {measurement: user_reference}
+    severity: manual
+    source_id: styles
+    source_location: "Від верхнього колонтитула до текста; Від нижнього колонтитула до текста"
+    quote: "1,25 см"
+    manual_reason: "За вибором користувача застосовуються header_distance/footer_distance від країв сторінки, як у зразку; це уточнення профілю, а не перефразована цитата. Автоматизація цих відстаней поза R01–R10."
+
+  - id: M08
+    name: Інші елементи таблиці стилів
+    severity: manual
+    source_id: styles
+    source_location: "Заголовки таблиці стилів — обов'язковий стиль елемента тексту"
+    quote: "назва стилю повинна починатися префіксом «ЕОМ:» крім стилів Заголовок та Зміст, а також стилів з рівнозначними назвами іншими мовами"
+    manual_reason: "Титульна сторінка, нумеровані заголовки, списки, перелік рисунків, джерела й інші ролі поза R01–R10 звіряються з відповідними рядками таблиці стилів вручну."
