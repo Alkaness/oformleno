@@ -6,12 +6,42 @@ The source repository remains private: `Alkaness/oformleno`, branch
 
 ## Current status
 
-The user enabled public sharing after an anonymous browser initially reached
-Streamlit's access/not-found page. A fresh anonymous browser then loaded the
-real checker through Cloud's same-origin app iframe and completed the actual
-upload, report and corrected-copy download. A reset cleanup defect was found
-and repaired locally; the updated deployment still needs its final hosted test.
-T017 remains unchecked until that test passes. T018 has not been started.
+**T017 complete, verified 2026-11-17 at 13:00 UTC.** The user enabled public
+sharing after an anonymous browser initially reached Streamlit's access/not-found
+page. A fresh anonymous browser loaded the real checker through Cloud's
+same-origin app iframe and passed the complete hosted scenario after the reset
+cleanup repair. The public URL is in README. T018 has not been started; the
+stage-3 checkpoint including its pitch scenario is not claimed complete.
+
+The repair source is `c3caa55ed0e5b273db54ccf0077ab0fc527d2786` on the existing
+private branch. Its [GitHub CI run](https://github.com/Alkaness/oformleno/actions/runs/44087294609)
+passed independently of local checks. The hosted session also showed the new
+cleanup owner and, more importantly, passed the observable reset behavior.
+Independent read-only review of the final JSON and completion notes found no
+remaining findings; no product code changed after this verified revision.
+
+## Final hosted scenario
+
+| Check | Verified result |
+| --- | --- |
+| Fresh anonymous access | Actual Ukrainian upload interface; no sign-in |
+| Actual cloud upload/report | R02 + R08: 2 errors, 1 fixable, 0 warnings, 7 manual |
+| Corrected report | 1 error, 0 fixable, 0 warnings, 7 manual |
+| Download click | Real link clicked; saved DOCX bytes equal the offered Blob |
+| Download validity | Reopened and checked locally; only R08 remains |
+| Preservation | Original hash unchanged, text and media retained |
+| Reset | Upload interface restored; previous Blob URL fetch fails |
+| 390px viewport | Upload controls present; screenshot captured |
+
+The source's SHA-256 is
+`3fc3fc322566696dcb234e202251319649a4e7e23ded6038446267887a2f35c6`; the downloaded
+copy's SHA-256 is
+`69d9d5f7b8d729fc7b1c1ebe4428fb3ed265e0bf4235c6c84de03867195318c2`.
+These identify generated QA documents only. `tmp/t017/hosted-browser-evidence.json`
+records `result: PASS`, the actual displayed counts and local recheck. Desktop
+upload/report/corrected-copy and narrow upload captures are in the same ignored
+directory. All owned QA browsers and temporary anonymous profiles were closed
+and removed. Generated evidence is not committed.
 
 ## Hosted evidence before the cleanup fix (2026-11-17)
 
@@ -56,10 +86,12 @@ dependencies, both locks, rules and quotations were not changed.
 
 Independent read-only review found no remaining blocker in the lifecycle fix,
 regression harness or installation change. `sh scripts/check.sh` passed Ruff,
-formatting (78 files) and 838 tests on Python 3.12.3. JavaScript syntax and
-whitespace checks passed. Earlier deployment source `bac5efb` has a successful
+formatting (78 files) and 838 tests on Python 3.12.3; the required repair commit
+hook also passed all 838 tests and formatting (79 files, including a temporary
+environment helper). JavaScript syntax, document guard, whitespace and local
+documentation links passed. Earlier deployment source `bac5efb` has a successful
 [GitHub CI run](https://github.com/Alkaness/oformleno/actions/runs/43315359929);
-that earlier CI is not evidence for this new repair revision.
+that earlier CI is not used as evidence for the repair revision's own CI pass.
 
 ## Evidence limits
 
