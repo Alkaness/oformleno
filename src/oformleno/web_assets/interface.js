@@ -1,5 +1,8 @@
 // No file bytes enter persistent component state. Uploads are one-shot triggers.
 export default function ({ parentElement, data, setTriggerValue }) {
+  // Streamlit calls this renderer again on data changes without unmounting it.
+  const disposeKey = Symbol.for("oformleno.interface.dispose");
+  parentElement[disposeKey]?.();
   document.documentElement.lang = "uk";
   const platformSkip = document.querySelector('[data-testid="stSkipToContent"]');
   if (platformSkip) {
@@ -11,6 +14,20 @@ export default function ({ parentElement, data, setTriggerValue }) {
   let reader = null;
   let active = true;
   let downloadUrl = null;
+  const dispose = () => {
+    if (!active) return;
+    active = false;
+    selected = null;
+    if (reader && reader.readyState === FileReader.LOADING) reader.abort();
+    reader = null;
+    if (downloadUrl) URL.revokeObjectURL(downloadUrl);
+    downloadUrl = null;
+    if (parentElement[disposeKey] === dispose) {
+      root.replaceChildren();
+      delete parentElement[disposeKey];
+    }
+  };
+  parentElement[disposeKey] = dispose;
 
   const button = (text, action, className = "") => {
     const element = document.createElement("button");
@@ -20,7 +37,10 @@ export default function ({ parentElement, data, setTriggerValue }) {
     element.addEventListener("click", action);
     return element;
   };
-  const reset = () => setTriggerValue("reset", true);
+  const reset = () => {
+    dispose();
+    setTriggerValue("reset", true);
+  };
 
   if (data.report) {
     // HTML comes only from the escaping Python renderer, never from an upload.
@@ -175,12 +195,5 @@ export default function ({ parentElement, data, setTriggerValue }) {
   }
   // The platform already provides the first keyboard skip link in the live app.
   if (platformSkip) root.querySelector(".app-skip, .skip-link")?.remove();
-  return () => {
-    active = false;
-    selected = null;
-    if (reader && reader.readyState === FileReader.LOADING) reader.abort();
-    reader = null;
-    if (downloadUrl) URL.revokeObjectURL(downloadUrl);
-    root.replaceChildren();
-  };
+  return dispose;
 }

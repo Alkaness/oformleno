@@ -28,10 +28,11 @@ const {default: render} = await import(uiUrl);
 URL.revokeObjectURL(uiUrl);
 let cleanup = () => {};
 const events = [];
+const mountElement = document.querySelector('#mount');
+mountElement.innerHTML = fixture.html;
 function mount(data) {
-  cleanup();
-  document.querySelector('#mount').innerHTML = fixture.html;
-  cleanup = render({parentElement: document.querySelector('#mount'), data,
+  // Data updates rerun the renderer without the platform calling unmount cleanup.
+  cleanup = render({parentElement: mountElement, data,
     setTriggerValue: (event, value) => events.push({event, value})});
 }
 function assert(value, message) { if (!value) throw new Error(message); }
@@ -80,20 +81,31 @@ try {
   assert(!document.querySelector('#findings').textContent.includes('R02'), 'Fixed error retained');
   assert(document.querySelector('#findings').textContent.includes('R08'), 'Residual error lost');
   assert(document.querySelector('#manual').textContent.includes('M08'), 'Manual evidence lost');
-  const link = document.querySelector('a.app-download');
+  let link = document.querySelector('a.app-download');
   assert(link && link.download === 'Виправлена_копія.docx', 'Download name/control missing');
   assert(link.compareDocumentPosition(document.querySelector('.summary a[href="#manual"]'))
     & Node.DOCUMENT_POSITION_FOLLOWING, 'Primary download placed after secondary navigation');
   const content = await (await fetch(link.href)).arrayBuffer();
   assert(await hash(content) === fixture.corrected_hash, 'Download Blob bytes differ');
+  const previousUrl = link.href;
+  const previousCleanup = cleanup;
+  mount(fixture.after);
+  previousCleanup();
+  link = document.querySelector('a.app-download');
+  assert(link && link.href !== previousUrl, 'Old cleanup erased the current render');
+  let previousRevoked = false;
+  try { await fetch(previousUrl); } catch { previousRevoked = true; }
+  assert(previousRevoked, 'Data rerender retained the previous Blob');
+  const repeated = await (await fetch(link.href)).arrayBuffer();
+  assert(await hash(repeated) === fixture.corrected_hash, 'Repeated render changed copy');
   const oldUrl = link.href;
   click('Очистити результат');
   assert(events.at(-1).event === 'reset', 'Reset trigger not delivered');
-  mount({report: null});
-  assert(!document.querySelector('.app-download'), 'Stale download after reset');
   let revoked = false;
   try { await fetch(oldUrl); } catch { revoked = true; }
-  assert(revoked, 'Old download Blob not revoked');
+  assert(revoked, 'Reset did not immediately revoke the old download Blob');
+  mount({report: null});
+  assert(!document.querySelector('.app-download'), 'Stale download after reset');
   mount(fixture.after);
   document.querySelector('#qa-status').textContent = 'FRONTEND: PASS — FileReader, validation, '
     + 'text escaping, report, residual/manual evidence, Blob bytes and reset';

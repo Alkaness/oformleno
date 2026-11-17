@@ -1,11 +1,35 @@
 # Current user decisions
 
+- **T017 hosted verification/repair (2026-11-17), still in progress.** The user
+  supplied https://oformleno.streamlit.app/ and then confirmed public sharing.
+  Fresh anonymous browser access and real cloud upload/report/download passed:
+  synthetic R02+R08 yielded 2 errors/1 fixable/7 manual; the downloaded copy
+  reopened with only R08, 0 fixable/7 manual, original hash/text/media preserved.
+  The clicked download matched the Blob. Reset returned to upload but left its
+  old Blob URL usable. This required repair within T017, not completion signoff.
+  The JS renderer now owns an idempotent per-parent disposer, called on data
+  updates and immediately on reset; stale unmount cleanup cannot clear new UI.
+  The harness now models data updates without unmount and verifies repeat-render,
+  reset revocation and stale cleanup. Taste foreground capture visibly reads
+  FRONTEND: PASS. Independent Sol review found no remaining source/harness issue.
+  Requirements now use `-e .` so Cloud source syncs do not leave installed package
+  code/assets stale. Fresh clean install confirms 48 unchanged runtime versions,
+  editable metadata/assets/YAML and no dev tools. No lock/rule/YAML change.
+  Full checks passed Ruff, formatting 78 files and all 838 tests; JS syntax and
+  whitespace passed. The README contains the actual URL. Detailed evidence:
+  `specs/001-mvp-checker/streamlit-cloud-verification.md`.
+  The repair must be pushed and verified on the actual host before checking T017.
+  Original access failure and probe iframe-traversal failure are archived in
+  ignored `tmp/t017/`; neither is a product pass. No student work was accessed.
+  T018 and later work remain unauthorized.
 - **T017 authorized (2026-11-12).** User chose “ok, let's use streamlit cloud”
   after comparing free hosts. Prepare and deploy the existing Streamlit demo to
   Community Cloud from the existing private `Alkaness/oformleno` repository,
   including the necessary source commit/push and README link. Keep source private;
-  no later task or Figma changes are authorized. Account connection and live
-  deployment verification remain pending; do not mark T017 complete prematurely.
+  no later task or Figma changes are authorized. Account connection and deployment
+  were completed by the user, who supplied https://oformleno.streamlit.app/.
+  Hosted functional verification is now in progress; keep T017 unchecked until
+  its evidence and README link are recorded.
 - **T017 preparation verified (2026-11-12).** User confirmed signing in to
   Community Cloud and connecting private GitHub repository access. GitHub API
   independently confirms private `Alkaness/oformleno`, ADMIN access, default
@@ -25,8 +49,19 @@
   expected bare-mode AppTest context warning appeared. Full `sh scripts/check.sh`:
   Ruff, 78-file formatting and 838 tests passed. Read-only Luna exploration and
   Sol review found no remaining source/config blocker. Main agent owns edits.
-  Preparing the necessary source commit/push; live build, public URL and hosted
-  upload/download/reset verification remain pending. T017 stays unchecked.
+  Source commit `bac5efbbb63bdcafbbf3159e1a146ba3a8908a51` was pushed to the
+  existing private deployment branch. It includes completed T004–T016 code and
+  documentation needed by the app; all 88 staged files passed the document guard,
+  private-directory/artifact/credential-pattern audit and whitespace check.
+  The required commit hook also passed Ruff, formatting and all 838 tests.
+  GitHub CI run https://github.com/Alkaness/oformleno/actions/runs/43315359929
+  completed successfully for that exact SHA (verified 2026-11-13): environment
+  install, document guard, Ruff, formatting and pytest all passed. GitHub's
+  deployment list is still empty; it supplies no hosted URL. User received the exact Cloud deployment
+  settings and was asked for the actual URL or build error. Live build, public
+  URL and hosted upload/download/reset verification remain pending. T017 stays
+  unchecked; T018 remains unauthorized. The worktree was clean immediately
+  after the source push; this subsequent progress record is not yet committed.
 - **T016 is complete (2026-11-12), authorized by "continue" after T015.**
   The local Streamlit demo implements Ukrainian upload, report, corrected-copy
   review/download and source disposal under the fixed EOM laboratory profile.

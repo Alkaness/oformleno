@@ -1,4 +1,4 @@
 # Streamlit Community Cloud installs the local src-layout package and its assets.
 # Runtime versions match the tested development lock; do not install dev tools.
 -c requirements-cloud.lock
-.
+-e .
