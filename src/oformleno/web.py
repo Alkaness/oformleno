@@ -4,6 +4,7 @@ import base64
 import binascii
 from dataclasses import dataclass, field
 
+from oformleno.check_options import BODY_TEXT_MODES
 from oformleno.engine import Report, RuleEngine
 from oformleno.fixer import FixError, fix_document_bytes
 from oformleno.loader import MAX_FILE_SIZE_BYTES, DocumentLoadError, load_document_bytes
@@ -37,8 +38,14 @@ def process_upload(payload: object) -> WebResult:
     the only returned data. An unchanged source is never kept as a download.
     """
     try:
-        if not isinstance(payload, dict) or set(payload) != {"name", "content"}:
+        if not isinstance(payload, dict) or set(payload) not in (
+            {"name", "content"},
+            {"name", "content", "body_text_mode"},
+        ):
             raise DocumentLoadError("Не вдалося прочитати завантаження. Оберіть файл ще раз.")
+        body_text_mode = payload.pop("body_text_mode", "ordinary")
+        if body_text_mode not in BODY_TEXT_MODES:
+            raise DocumentLoadError("Невідомий режим основного тексту. Оберіть режим ще раз.")
         name, encoded = payload.pop("name"), payload.pop("content")
         if not isinstance(name, str) or not isinstance(encoded, str):
             raise DocumentLoadError("Не вдалося прочитати завантаження. Оберіть файл ще раз.")
@@ -54,13 +61,19 @@ def process_upload(payload: object) -> WebResult:
         ruleset = load_ruleset()
         document = load_document_bytes(content, filename=name)
         del name
-        before = RuleEngine().check(document, ruleset, document_type="laboratory_report")
+        before = RuleEngine().check(
+            document, ruleset, document_type="laboratory_report", body_text_mode=body_text_mode
+        )
         del document
         if not before.summary.fixable:
             return WebResult(before)
         try:
             fixed = fix_document_bytes(
-                content, ruleset, filename="document.docx", document_type="laboratory_report"
+                content,
+                ruleset,
+                filename="document.docx",
+                document_type="laboratory_report",
+                body_text_mode=body_text_mode,
             )
         except FixError:
             return WebResult(

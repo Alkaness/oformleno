@@ -1,5 +1,114 @@
 # Current user decisions
 
+- **Publication approved (2026-11-17).** User explicitly replied "i approve
+  committing and pushing" to the concrete local T009a and T018–T020 changes
+  and the proposed public-demo verification. Commit and push the reviewed
+  source/documentation only to the existing `Alkaness/oformleno` deployment
+  branch `001-mvp-checker`, allow the existing Streamlit deployment to update,
+  inspect exact-revision GitHub CI and run the new T018 scenario anonymously.
+  Generated DOCX/video/PDF and all private work remain ignored. This approval
+  does not confirm a not-yet-observed hosted outcome or authorize T021–T023.
+  Fetch confirms local and remote heads match before publication. Record real
+  commit, CI and hosted results in `feedback-deployment-verification.md`.
+- **Resumed verification complete (2026-11-17).** User said "continue" after
+  the turn was interrupted during final T020 checks. All documentation edits
+  had applied. Resumed Ruff and formatting checks for the benchmark passed,
+  as did both JavaScript syntax checks, whitespace and the tracked-document
+  guard. The earlier full check remains 872 passing tests; no unchanged suite
+  rerun was needed. Publication review covers 32 changed source/documentation
+  files, with no prohibited artifacts or detected credential patterns. Demo
+  DOCX, video and benchmark evidence are present and ignored. Current branch is
+  `001-mvp-checker`, origin is the intended `Alkaness/oformleno` repository.
+  Nothing was committed, pushed or deployed. The holdout intake is still empty.
+  Present the concrete local deliverables and request checkpoint/publication
+  confirmation before updating the public app or starting T021–T023.
+- **T020 complete; stage3 checkpoint pending (2026-11-17).** Rendered generated
+  DOCX has exactly30pages via isolatedLibreOffice24.2.7.2 PDF+pdfinfo. Workload
+  120Normalparagraphs/480runs/6tables,40528bytes. Seven realwebprocessing+HTML
+  runs: first0.226865s,median0.221535s,max0.231455s,all<5s. All10rules invoked,
+  noerrors/13manual,sourceunchanged. ExcludesPDF rendering/interpreterstartup/
+  network/host/browser/fixes; do not generalize to all documents/cloud latency.
+  README and `performance.md` updated, script `scripts/benchmark_check.py`.
+  Initial run had wrongmanual7expectation; actual6tableuncertainties+7checklist
+  are13. Corrected assertion, no rules/document alteration to fit results;
+  separate final evidence `tmp/t020/verified/benchmark.json` records success.
+  Solreview has no remainingfinding. Fullcheck exit0:Ruff,87formatted,872tests;
+  final scriptassert clarification separately lint/format checked. No commit/
+  push/newCI/deployment. T009a,T018,T019,T020 complete locally; publichoststill
+  previousbuild. User must approve concrete publication/checkpoint continuation;
+  then commit/push only to existing Alkaness/oformleno deploymentbranch and
+  verify newT018 actualanonymousflow before claiming stage3checkpointpassed.
+  T021–T023 queue remaining feedback but must wait at checkpoint. Authorpermission
+  for holdoutconfirmed; ignoredprivate/t014b/inbox remains empty. Keep100%T014
+  developmental results distinct from future independentvalidation. No outreach
+  messages/new survey responses or secondruleset are authorized by this record.
+- **T019 complete (2026-11-17).** Recorded actual loopback Streamlit backend
+  with generated T018 input, real upload/counts10→1/manual7/copy download.
+  Ignored artifact `tmp/t019/recorded/Оформлено_демо_60с.mp4`:60s,H264,1440×900,
+  2fps,silent,default Ukrainian subtitle stream; also SRT and120sourceframes.
+  All actions finish by52.003s; representative frames and an encoded44s frame
+  were inspected. ffprobe and whole-video decode pass. Actual downloaded DOCX
+  independently reopens with onlyR08/manual7; text/non-main ZIP parts and
+  original hash are preserved. Evidence `recording-evidence.json`/`ffprobe.json`;
+  reproducible recorder source and `backup-video.md` explain limits. Sol review
+  recommendations on timing/download/video validation were satisfied; future
+  recordings reject late actions. First sandbox browser-start FAIL is archived
+  separately; approved host run passes. Owned browser/profile and local server
+  cleaned/stopped. Node syntax passes; no Python change since872passed(T018).
+  No cloud/Word/physical-device claim, publication,commit/push or new CI.
+  T020 is current under feedback point4; stage3 checkpoint remains open.
+- **T018 complete (2026-11-17).** Authorized by user's feedback order after
+  T009a. `scripts/make_demo.py` creates a fully synthetic10-error DOCX plus
+  corrected copy, before/after JSON/HTML and hash/count manifest in temp output.
+  Normal/Calibri12/single-spacing is included. Independently reopened results:
+  10errors/9fixable/7manual→1R08/0fixable/7manual, text/table XML and source
+  preserved; existing artifacts cannot be overwritten. Actual artifacts are
+  ignored in `tmp/t018/demo/`. `demo-script.md` supplies a60-second table with
+  114spoken words, actual controls/counts, local requirement and honest EOM-only
+  scope. No rehearsal/video/Word/independent-accuracy/hosted-scenario claim.
+  Read-only Sol review of code/tests/scenario has no remaining findings.
+  Full check exit0: Ruff,85files formatted,872tests passed. Document guard and
+  whitespace pass. No commit/push/new CI/publication. T019 is current under
+  feedback point4; stage3checkpoint stays open until hosted T018 scenario is
+  actually verified and user confirms it.
+- **T009a complete locally (2026-11-17).** Explicit ordinary/default Word
+  paragraph mode implemented across body R03–R05, engine/model, copy fixer,
+  CLI, web and JSON/HTML context. Web defaults ordinary by the user's choice;
+  API/CLI default styles. Generated Normal/Calibri12/single-spacing source
+  yields 3→0; seven manual checklist items remain. Preserved source bytes,
+  exact excluded XML and non-main ZIP parts. Unknown roles/formatting, field
+  results across paragraphs, structural and object exclusions stay guarded.
+  32 added cases; final `sh scripts/check.sh` exit0: Ruff,81 formatted,870 passed.
+  Read-only Luna exploration and two Sol review rounds have no open findings.
+  Actual component/browser synthetic flow passes mode payload/reset, 5→1
+  combined errors with residual R08/manual7, download bytes and Blob revocation.
+  Real Streamlit AppTest separately passes ordinary 3→0 and upload cleanup.
+  Native Figma supplement nodes546:7/546:24 were visually inspected; originals
+  preserved. Evidence: `ordinary-text-mode-verification.md` and Figma handoff.
+  Gate **OPEN25 (rounds used up)**, full responsive consistency43FAIL/24WARN,
+  layout script error, synthetic perf0FAIL/0WARN and coverage limits are explicit.
+  No student work accessed, YAML/quote/dependency change, commit/push or new CI.
+  Hosted demo still runs the prior version. T018 is now the current authorized
+  task under user's feedback order; do not overlap another task's edits.
+- **Holdout intake (2026-11-17).** User confirms authors permitted the new
+  works. No files supplied/inspected yet. Created ignored local intake folder
+  `private/t014b/inbox/` and told user where to place the genuinely unseen3–5
+  DOCX works. Existing ten-document development corpus cannot serve as holdout.
+- **Feedback scope (2026-11-17).** User prioritized ordinary-text checking before
+  demo preparation (T018/T019/T020), then independent unseen-document validation.
+  Work one task at a time. Current authorized task is T009a, recorded in tasks.md:
+  explicit ordinary/default Word paragraph mode for R03–R05, same-mode copy fixes,
+  CLI/web/report context and generated-DOCX preservation/regression verification.
+  User chose ordinary mode as the web default; keep API/CLI defaults compatible.
+  Preserve the constitution's manual policy for unknown roles/formatting and
+  structural exclusions. No YAML/quote changes, automatic M01 failure or claimed
+  independent accuracy. Figma plugin connection is confirmed for this task.
+  Remaining feedback is queued: grouped manual presentation; fresh 3–5 authorized
+  unseen works with independent labels; survey corrections (24/67%, distrust13/24)
+  and sample limits (IT14/24, second year17/24); honest single-EOM scope (second
+  ruleset is outside current MVP); retain intentional public visibility. User's
+  0.83-second/100-page observation is user-reported, not a completed T020 measurement.
+  No later task started and no new commit/push/publication is authorized here.
 - **Repository made public (2026-11-17).** User explicitly requested switching
   the repository to public and asked for the repository and website links to
   share for external review. This supersedes the previous private-repository

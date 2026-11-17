@@ -131,7 +131,12 @@ def _measure(value: str | None, divisor: int, *, allow_zero: bool = False) -> fl
 class DocumentModel:
     """Formatting view; recreate it after editing the underlying document."""
 
-    def __init__(self, document: Document, *, story_part=None):
+    def __init__(self, document: Document, *, story_part=None, body_text_mode="styles"):
+        from oformleno.check_options import BODY_TEXT_MODES
+
+        if body_text_mode not in BODY_TEXT_MODES:
+            raise ValueError("Невідомий режим перевірки основного тексту.")
+        self.body_text_mode = body_text_mode
         self.document = document
         self._story_part = story_part
         self._story_root = document.element
@@ -162,6 +167,12 @@ class DocumentModel:
                 self._style_ids[style.get(qn("w:styleId"))].append(style)
         self._defaults = {}
         self._scope_issues = {}
+
+    def with_body_text_mode(self, mode):
+        """Keep role-selection context local to this check, without mutating XML."""
+        if mode == self.body_text_mode:
+            return self
+        return DocumentModel(self.document, story_part=self._story_part, body_text_mode=mode)
 
     @property
     def paragraphs(self) -> list[Paragraph]:

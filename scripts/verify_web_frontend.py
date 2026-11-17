@@ -14,7 +14,7 @@ import tempfile
 from pathlib import Path
 
 from docx import Document
-from docx.shared import Mm
+from docx.shared import Mm, Pt
 
 from oformleno.web import WebState, accept_upload, reveal_copy, view_data
 
@@ -54,6 +54,11 @@ async function hash(bytes) {
 try {
   mount({report: null});
   assert(document.querySelector('.app-check').disabled, 'Check enabled without file');
+  const mode = document.querySelector('#body-text-mode');
+  assert(mode.value === 'ordinary', 'Ordinary mode is not the default');
+  mode.value = 'styles'; mode.dispatchEvent(new Event('change'));
+  assert(document.querySelector('#body-text-help').textContent.includes('відомими стилями'),
+    'Mode explanation did not change');
   choose(new File(['x'], 'generated.pdf'));
   assert(document.querySelector('.app-error').textContent.includes('лише файли'),
     'Extension validation');
@@ -69,16 +74,37 @@ try {
   while (!events.length && Date.now() - started < 5000) await new Promise(r => setTimeout(r, 20));
   assert(events.length === 1 && events[0].event === 'upload', 'Upload trigger not delivered');
   assert(events[0].value.content === fixture.source, 'FileReader changed input bytes');
+  assert(events[0].value.body_text_mode === 'styles', 'Selected mode not transmitted');
+  assert(mode.disabled, 'Mode can change while reading upload');
   assert(document.querySelector('.app-file').files.length === 0, 'File input retained source');
   assert(!document.querySelector('.app-selected').textContent, 'Filename retained after send');
+  events.length = 0;
+  mount({report: null});
+  assert(document.querySelector('#body-text-mode').value === 'ordinary', 'Reset mode default');
+  choose(new File([bytes], 'generated.docx'));
+  click('Перевірити документ');
+  const secondStarted = Date.now();
+  while (!events.length && Date.now() - secondStarted < 5000) {
+    await new Promise(r => setTimeout(r, 20));
+  }
+  assert(events.length === 1 && events[0].value.body_text_mode === 'ordinary',
+    'Default mode not transmitted');
   events.length = 0;
   mount(fixture.before);
   assert(document.querySelector('#findings').textContent.includes('R02'),
     'Original report missing');
+  for (const rule of ['R03', 'R04', 'R05']) {
+    assert(document.querySelector('#findings').textContent.includes(rule),
+      'Ordinary prose violation missing: ' + rule);
+  }
   click('Переглянути виправлену копію');
   assert(events.at(-1).event === 'reveal', 'Reveal trigger not delivered');
   mount(fixture.after);
   assert(!document.querySelector('#findings').textContent.includes('R02'), 'Fixed error retained');
+  for (const rule of ['R03', 'R04', 'R05']) {
+    assert(!document.querySelector('#findings').textContent.includes(rule),
+      'Ordinary prose violation retained: ' + rule);
+  }
   assert(document.querySelector('#findings').textContent.includes('R08'), 'Residual error lost');
   assert(document.querySelector('#manual').textContent.includes('M08'), 'Manual evidence lost');
   let link = document.querySelector('a.app-download');
@@ -105,11 +131,15 @@ try {
   try { await fetch(oldUrl); } catch { revoked = true; }
   assert(revoked, 'Reset did not immediately revoke the old download Blob');
   mount({report: null});
+  assert(document.querySelector('#body-text-mode').value === 'ordinary', 'Reset lost default mode');
   assert(!document.querySelector('.app-download'), 'Stale download after reset');
   mount(fixture.after);
   document.querySelector('#qa-status').textContent = 'FRONTEND: PASS — FileReader, validation, '
     + 'text escaping, report, residual/manual evidence, Blob bytes and reset';
   document.body.dataset.qa = 'pass';
+  if (fixture.preview !== 'after') {
+    mount(fixture.preview === 'upload' ? {report: null} : fixture.before);
+  }
 } catch (error) {
   document.querySelector('#qa-status').textContent = 'FRONTEND: FAIL — ' + error.message;
   document.body.dataset.qa = 'fail';
@@ -120,12 +150,18 @@ try {
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("output", nargs="?", type=Path)
+    parser.add_argument("--view", choices=("upload", "before", "after"), default="after")
     args = parser.parse_args()
     output = args.output or Path(tempfile.mkdtemp(prefix="oformleno-web-qa-")) / "frontend.html"
     with tempfile.TemporaryDirectory(prefix="oformleno-web-fixtures-") as folder:
         paths = generate_fixtures(Path(folder))
         document = Document(paths["bad_r08"])
         document.sections[0].left_margin = Mm(20)
+        paragraph = document.paragraphs[0]
+        paragraph.style = "Normal"
+        paragraph.runs[0].font.name = "Calibri"
+        paragraph.runs[0].font.size = Pt(12)
+        paragraph.paragraph_format.line_spacing = 1
         combined = Path(folder) / "combined.docx"
         document.save(combined)
         source = combined.read_bytes()
@@ -133,13 +169,14 @@ def main():
         accept_upload(
             state, {"name": "generated.docx", "content": base64.b64encode(source).decode()}
         )
-        assert state.result and state.result.before.summary.errors == 2
+        assert state.result and state.result.before.summary.errors == 5
         before = view_data(state)
         reveal_copy(state)
         after = view_data(state)
         assert state.result.after.summary.errors == 1 and state.result.after.summary.manual == 7
         assets = ROOT / "src/oformleno/web_assets"
         fixture = {
+            "preview": args.view,
             "html": (assets / "interface.html").read_text(),
             "js": (assets / "interface.js").read_text(),
             "source": base64.b64encode(source).decode(),

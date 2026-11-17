@@ -6,6 +6,7 @@ from typing import Annotated, get_args
 import typer
 from typer.core import TyperCommand, TyperGroup
 
+from oformleno.check_options import BODY_TEXT_MODES
 from oformleno.engine import EngineError, RuleEngine
 from oformleno.fixer import FixError, fix_document
 from oformleno.loader import DocumentLoadError, load_document
@@ -32,6 +33,8 @@ _CHECK_HELP = """Використання: oformleno check ФАЙЛ [ПАРАМ�
   --rules НАБІР          Ідентифікатор або шлях до YAML-файлу.
                         Типово: lpnu-eom-styles-2026.
   --format ФОРМАТ       json (типово) або html — звіт для читання у браузері.
+  --body-text-mode РЕЖИМ styles (типово) — за стилями; ordinary — звичайні
+                        абзаци вважати основним текстом, з винятками для структури.
   --document-type ТИП    laboratory_report — лабораторна робота;
                         qualification_thesis — кваліфікаційна робота;
                         other_printed_work — інша друкована робота.
@@ -51,6 +54,7 @@ _FIX_HELP = """Використання: oformleno fix ФАЙЛ --output НОВ�
 
 Параметри:
   --output НОВИЙ_ФАЙЛ    Новий файл .docx для виправленої копії; обов'язковий.
+  --body-text-mode РЕЖИМ styles (типово) або ordinary, як під час перевірки.
   --rules НАБІР          Ідентифікатор або шлях до YAML-файлу.
                         Типово: lpnu-eom-styles-2026.
   --document-type ТИП    laboratory_report, qualification_thesis,
@@ -107,7 +111,12 @@ def check(
     report_format: Annotated[
         str, typer.Option("--format", help="Формат звіту: json або html.")
     ] = "json",
+    body_text_mode: Annotated[
+        str, typer.Option("--body-text-mode", help="Режим основного тексту: styles або ordinary.")
+    ] = "styles",
 ) -> int:
+    if body_text_mode not in BODY_TEXT_MODES:
+        return _error("Невідомий режим основного тексту. Оберіть styles або ordinary.")
     if report_format not in {"json", "html"}:
         return _error("Невідомий формат звіту. Оберіть json або html.")
     if document_type is not None and document_type not in get_args(DocumentType):
@@ -115,7 +124,9 @@ def check(
     try:
         ruleset = load_ruleset(rules)
         loaded = load_document(document)
-        report = RuleEngine().check(loaded, ruleset, document_type=document_type)
+        report = RuleEngine().check(
+            loaded, ruleset, document_type=document_type, body_text_mode=body_text_mode
+        )
     except (DocumentLoadError, RulesetLoadError, EngineError) as error:
         return _error(str(error))
     typer.echo(
@@ -134,11 +145,22 @@ def fix(
     document_type: Annotated[
         str | None, typer.Option("--document-type", help="Тип роботи.")
     ] = None,
+    body_text_mode: Annotated[
+        str, typer.Option("--body-text-mode", help="Режим основного тексту: styles або ordinary.")
+    ] = "styles",
 ) -> int:
+    if body_text_mode not in BODY_TEXT_MODES:
+        return _error("Невідомий режим основного тексту. Оберіть styles або ordinary.")
     if document_type is not None and document_type not in get_args(DocumentType):
         return _error("Невідомий тип роботи. Перелік значень: oformleno fix --help.")
     try:
-        result = fix_document(document, output, load_ruleset(rules), document_type=document_type)
+        result = fix_document(
+            document,
+            output,
+            load_ruleset(rules),
+            document_type=document_type,
+            body_text_mode=body_text_mode,
+        )
     except (DocumentLoadError, RulesetLoadError, EngineError, FixError) as error:
         return _error(str(error))
     typer.echo(

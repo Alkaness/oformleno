@@ -5,6 +5,7 @@ from html import escape
 
 from pydantic import JsonValue
 
+from oformleno.check_options import BODY_TEXT_MODE_LABELS
 from oformleno.engine import Finding, Location, Report
 
 _DOCUMENT_TYPES = {
@@ -338,7 +339,12 @@ def render_report_html(report: Report) -> str:
     body += "<h1>Звіт про оформлення</h1>"
     body += f'<p class="meta">{_text(report.ruleset_title)}</p>'
     document_type = _DOCUMENT_TYPES.get(report.document_type, "Тип роботи не вказано")
-    body += f'<p class="meta">{document_type}</p></div><div class="columns">'
+    body += f'<p class="meta">{document_type}</p>'
+    body += f'<p class="meta">Режим: {_text(BODY_TEXT_MODE_LABELS[report.body_text_mode])}.</p>'
+    if report.body_text_mode == "ordinary":
+        body += '<p class="meta">Звичайні абзаци перевірено як основний текст за обраним режимом. '
+        body += "Стилі заголовків, підписів, списки й невизначені елементи мають окремі вимоги.</p>"
+    body += '</div><div class="columns">'
     body += '<aside class="summary" aria-labelledby="summary-title">'
     body += '<h2 id="summary-title">Підсумок перевірки</h2>'
     error_word = "помилок"

@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from docx.oxml.ns import qn
 
 from oformleno.engine import Finding, Location
+from oformleno.rules._heading_fields import heading_field_uncertainties
 
 _BODY_NAMES = {"еом: основний", "body text"}
 _NON_BODY_NAMES = {"caption", "title", "subtitle", "toc heading", "еом: програма"}
@@ -64,6 +65,14 @@ def _role(model, paragraph, text, rule, ruleset):
         ) or outline not in (None, "9")
         body_names = {_name(name) for name in rule.params.get("body_styles", _BODY_NAMES)}
         body = any(name in body_names for name in names)
+        # The selected mode declares ordinary/default-style paragraphs to be
+        # prose. It does not infer roles from their current font or size, nor
+        # turn arbitrary custom styles into body text.
+        ordinary = (
+            model.body_text_mode == "ordinary"
+            and bool(styles)
+            and (names[0] == "normal" or styles[0].get(qn("w:default")) in {"1", "true", "on"})
+        )
         if non_body:
             # A heading, caption or program style can inherit body typography
             # while retaining its own semantic role.
@@ -88,7 +97,7 @@ def _role(model, paragraph, text, rule, ruleset):
             number_id = _value(numbering, "w:numId")
             if number_id != "0":
                 return "manual", "Роль нумерованого елемента потребує ручної перевірки."
-        if not body:
+        if not body and not ordinary:
             return "manual", "Роль основного тексту не підтверджена відомим стилем."
         if _name(text.strip().removesuffix(".")) in {
             _name(name.strip().removesuffix(".")) for name in ruleset.structural_headings
@@ -100,6 +109,13 @@ def _role(model, paragraph, text, rule, ruleset):
                 re.escape(label) + r"\s*\d", text.strip(), re.IGNORECASE
             ):
                 return "manual", "Можливий підпис має стиль основного тексту; уточніть роль."
+        if ordinary and re.match(r"(?:Рисунок|Таблиця)\s+\d", text.strip(), re.IGNORECASE):
+            return "manual", "Можливий підпис потребує уточнення ролі."
+        if ordinary and any(
+            node.tag in {qn("w:drawing"), qn("w:pict"), qn("w:object")}
+            for node in paragraph._p.iter()
+        ):
+            return "manual", "Абзац з об’єктом потребує уточнення ролі."
         instructions = [node.text or "" for node in paragraph._p.iter(qn("w:instrText"))]
         instructions += [
             node.get(qn("w:instr"), "") for node in paragraph._p.iter(qn("w:fldSimple"))
@@ -114,6 +130,9 @@ def _role(model, paragraph, text, rule, ruleset):
 
 
 def body_paragraphs(model, rule, ruleset):
+    field_uncertainties = (
+        heading_field_uncertainties(model) if model.body_text_mode == "ordinary" else {}
+    )
     for index, paragraph in enumerate(model.paragraphs, 1):
         all_runs = model.runs(paragraph)
         text = "".join(run.text for run in all_runs)
@@ -124,6 +143,8 @@ def body_paragraphs(model, rule, ruleset):
         role, reason = _role(model, paragraph, text, rule, ruleset)
         if role == "excluded":
             continue
+        if paragraph._p in field_uncertainties:
+            reason = reason or "Поля або спеціальні символи потребують уточнення ролі абзацу."
         runs = tuple(run for run in all_runs if run.text or run._r.find(qn("w:sym")) is not None)
         yield TextParagraph(
             paragraph,

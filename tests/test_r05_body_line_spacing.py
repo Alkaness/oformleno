@@ -10,6 +10,17 @@ from docx.shared import Pt
 from fixtures.make_fixtures import BODY_BASE_STYLE, BODY_STYLE
 
 
+def test_ordinary_mode_checks_single_spacing_without_body_style(eom_fixtures, body_check):
+    document = Document(eom_fixtures["good"])
+    paragraph = document.paragraphs[0]
+    paragraph.style = document.styles["Normal"]
+    paragraph.paragraph_format.line_spacing = 1
+    findings = body_check(document, "R05", body_text_mode="ordinary")
+    assert len(findings) == 1 and findings[0].severity == "error"
+    assert findings[0].actual == {"kind": "multiple", "value": 1}
+    assert findings[0].fixable
+
+
 def test_single_spacing_is_a_localized_body_error(eom_fixtures, body_check):
     findings = body_check(Document(eom_fixtures["bad_r05"]), "R05")
     assert len(findings) == 1

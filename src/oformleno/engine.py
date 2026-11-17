@@ -7,6 +7,7 @@ from typing import Annotated, Literal, Protocol, Self
 from docx.document import Document
 from pydantic import Field, JsonValue, StrictBool, computed_field, field_validator, model_validator
 
+from oformleno.check_options import BODY_TEXT_MODES, BodyTextMode
 from oformleno.model import DocumentModel
 from oformleno.ruleset import ConfigModel, DocumentType, NonBlank, RuleConfig, Ruleset, Severity
 
@@ -64,6 +65,7 @@ class Report(ConfigModel):
     ruleset_title: NonBlank
     ruleset_status: Literal["draft", "reviewed"] | None = None
     document_type: DocumentType | None = None
+    body_text_mode: BodyTextMode = "styles"
     findings: tuple[Finding, ...] = ()
     checked_rules: tuple[str, ...] = ()
     unavailable_rules: tuple[str, ...] = ()
@@ -161,7 +163,10 @@ class RuleEngine:
         ruleset: Ruleset,
         *,
         document_type: DocumentType | None = None,
+        body_text_mode: BodyTextMode | None = None,
     ) -> Report:
+        if body_text_mode is not None and body_text_mode not in BODY_TEXT_MODES:
+            raise EngineError("Невідомий режим перевірки основного тексту.")
         if (
             document_type is not None
             and ruleset.applicability is not None
@@ -170,6 +175,8 @@ class RuleEngine:
             raise EngineError("Обраний тип роботи не підтримується цим набором правил.")
 
         model = document if isinstance(document, DocumentModel) else DocumentModel(document)
+        if body_text_mode is not None:
+            model = model.with_body_text_mode(body_text_mode)
         findings = []
         checked = []
         unavailable = []
@@ -237,6 +244,7 @@ class RuleEngine:
             ruleset_title=ruleset.title,
             ruleset_status=ruleset.status,
             document_type=document_type,
+            body_text_mode=model.body_text_mode,
             findings=tuple(findings),
             checked_rules=tuple(checked),
             unavailable_rules=tuple(unavailable),

@@ -9,6 +9,16 @@ from docx.shared import Pt
 from fixtures.make_fixtures import BODY_BASE_STYLE, BODY_STYLE
 
 
+def test_ordinary_mode_reads_size_inherited_from_normal(eom_fixtures, body_check):
+    document = Document(eom_fixtures["good"])
+    document.paragraphs[0].style = document.styles["Normal"]
+    document.styles["Normal"].font.size = Pt(12)
+    findings = body_check(document, "R04", body_text_mode="ordinary")
+    assert len(findings) == 1 and findings[0].severity == "error"
+    assert findings[0].actual == {"size_pt": [12]}
+    assert findings[0].expected == {"size_pt": 14} and findings[0].fixable
+
+
 def test_wrong_body_size_has_paragraph_location_and_yaml_expectation(eom_fixtures, body_check):
     document = Document(eom_fixtures["bad_r04"])
     findings = body_check(document, "R04")

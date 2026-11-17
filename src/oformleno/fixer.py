@@ -13,6 +13,7 @@ from docx import Document
 from docx.oxml.ns import qn
 from lxml import etree
 
+from oformleno.check_options import BodyTextMode
 from oformleno.engine import Report, RuleEngine
 from oformleno.loader import MAX_FILE_SIZE_BYTES, DocumentLoadError, load_document_bytes
 from oformleno.model import DocumentModel
@@ -106,12 +107,15 @@ def fix_document_bytes(
     *,
     filename: str = "document.docx",
     document_type: DocumentType | None = None,
+    body_text_mode: BodyTextMode = "styles",
 ) -> FixResult:
     """Return a separate in-memory copy and real before/after reports; never fix manual items."""
     document = load_document_bytes(content, filename=filename)
     checkers = default_checkers()
     engine = RuleEngine(checkers)
-    before = engine.check(document, ruleset, document_type=document_type)
+    before = engine.check(
+        document, ruleset, document_type=document_type, body_text_mode=body_text_mode
+    )
     paragraphs = DocumentModel(document).paragraphs
     heading_paths = tuple(
         document.element.getroottree().getpath(paragraphs[index - 1]._p)
@@ -134,7 +138,9 @@ def fix_document_bytes(
             ):
                 # Each handler plans all changes before writing; its model is then
                 # discarded. No cached model is reused after editing the document.
-                if checkers[rule.id].fix(DocumentModel(document), rule, ruleset):
+                if checkers[rule.id].fix(
+                    DocumentModel(document, body_text_mode=body_text_mode), rule, ruleset
+                ):
                     applied.append(rule.id)
         if _content_signature(document.element, heading_paths) != signature:
             raise FixError("Вміст документа не пройшов перевірку збереження; копію не видано.")
@@ -148,7 +154,9 @@ def fix_document_bytes(
         reopened = Document(BytesIO(corrected))
         if _content_signature(reopened.element, heading_paths) != signature:
             raise FixError("Вміст виправленої копії не пройшов перевірку збереження.")
-        after = engine.check(reopened, ruleset, document_type=document_type)
+        after = engine.check(
+            reopened, ruleset, document_type=document_type, body_text_mode=body_text_mode
+        )
         if after.failed_rules or any(
             item.rule_id in _FIX_RULES and item.fixable for item in after.findings
         ):
@@ -191,6 +199,7 @@ def fix_document(
     ruleset: Ruleset,
     *,
     document_type: DocumentType | None = None,
+    body_text_mode: BodyTextMode = "styles",
 ) -> FixResult:
     """Read a bounded source, verify a corrected copy, then create a new destination."""
     source, destination = Path(source), Path(destination)
@@ -207,6 +216,12 @@ def fix_document(
         if isinstance(error, FixError):
             raise
         raise DocumentLoadError("Не вдалося прочитати файл для виправлення.") from None
-    result = fix_document_bytes(content, ruleset, filename=source.name, document_type=document_type)
+    result = fix_document_bytes(
+        content,
+        ruleset,
+        filename=source.name,
+        document_type=document_type,
+        body_text_mode=body_text_mode,
+    )
     _write_new_copy(destination, result.document_bytes)
     return result

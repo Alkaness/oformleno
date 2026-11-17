@@ -108,6 +108,14 @@ export default function ({ parentElement, data, setTriggerValue }) {
             <div><div class="app-field-label">Методичка</div><div class="app-field-value">Кафедра ЕОМ · 2026</div></div>
             <div><div class="app-field-label">Тип роботи</div><div class="app-field-value">Лабораторна робота</div></div>
           </div>
+          <div class="app-mode">
+            <label class="app-field-label" for="body-text-mode">Режим основного тексту</label>
+            <select id="body-text-mode" class="app-field-value" aria-describedby="body-text-help">
+              <option value="ordinary">Звичайний текст</option>
+              <option value="styles">За стилями документа</option>
+            </select>
+            <p id="body-text-help" class="app-meta">Для тексту без стилів кафедри. Звичайні абзаци перевіряємо як основний текст; заголовки, підписи й таблиці мають окремі вимоги.</p>
+          </div>
           <div class="app-dropzone" aria-label="Завантаження документа">
             <p class="app-file-type">.docx</p>
             <p>Перетягніть документ сюди</p><p class="app-meta">або оберіть файл на пристрої</p>
@@ -133,12 +141,20 @@ export default function ({ parentElement, data, setTriggerValue }) {
     const caption = root.querySelector(".app-selected");
     const error = root.querySelector(".app-error");
     const status = root.querySelector(".app-status");
+    const mode = root.querySelector("#body-text-mode");
+    const modeHelp = root.querySelector("#body-text-help");
+    mode.addEventListener("change", () => {
+      modeHelp.textContent = mode.value === "ordinary"
+        ? "Для тексту без стилів кафедри. Звичайні абзаци перевіряємо як основний текст; заголовки, підписи й таблиці мають окремі вимоги."
+        : "Основний текст визначаємо за відомими стилями Word. Звичайні абзаци без підтвердженої ролі потребують ручного перегляду.";
+    });
     const choose = button("Обрати файл", () => input.click());
     zone.append(choose);
     const check = button("Перевірити документ", async () => {
       if (!selected || reader) return;
       check.disabled = true;
       choose.disabled = true;
+      mode.disabled = true;
       status.textContent = "Перевіряємо документ і готуємо окрему копію…";
       reader = new FileReader();
       reader.onerror = () => {
@@ -150,10 +166,12 @@ export default function ({ parentElement, data, setTriggerValue }) {
         error.textContent = "Не вдалося прочитати файл. Оберіть його ще раз.";
         error.hidden = false;
         choose.disabled = false;
+        mode.disabled = false;
       };
       reader.onload = () => {
         if (!active) return;
-        const payload = { name: selected.name, content: reader.result.split(",", 2)[1] };
+        const payload = { name: selected.name, content: reader.result.split(",", 2)[1],
+          body_text_mode: mode.value };
         selected = null;
         input.value = "";
         caption.textContent = "";

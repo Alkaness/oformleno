@@ -4,6 +4,8 @@ import base64
 import json
 from pathlib import Path
 
+from docx import Document
+from docx.shared import Pt
 from streamlit.components.v2.bidi_component.main import _make_trigger_id
 from streamlit.proto.WidgetStates_pb2 import WidgetStates
 from streamlit.testing.v1 import AppTest
@@ -30,6 +32,35 @@ def test_initial_app_is_ukrainian_with_no_retained_uploads():
     assert view(app)["report"] is None
     assert app.session_state.oformleno_result.result is None
     assert app.session_state.oformleno_interface.upload is None
+
+
+def test_real_component_handles_ordinary_text_and_clears_upload(eom_fixtures, tmp_path):
+    document = Document(eom_fixtures["good"])
+    paragraph = document.paragraphs[0]
+    paragraph.style = "Normal"
+    paragraph.runs[0].font.name = "Calibri"
+    paragraph.runs[0].font.size = Pt(12)
+    paragraph.paragraph_format.line_spacing = 1
+    source = tmp_path / "generated.docx"
+    document.save(source)
+    original = source.read_bytes()
+    encoded = base64.b64encode(original).decode("ascii")
+    app = AppTest.from_file(str(APP)).run()
+    event(
+        app, "upload", {"name": "generated.docx", "content": encoded, "body_text_mode": "ordinary"}
+    )
+    result = app.session_state.oformleno_result.result
+    assert result.before.summary.errors == 3 and result.after.summary.errors == 0
+    assert result.before.body_text_mode == result.after.body_text_mode == "ordinary"
+    assert "Звичайні абзаци — основний текст" in view(app)["report"]
+    assert app.session_state.oformleno_interface.upload is None
+    assert encoded not in repr(app.session_state.to_dict())
+    assert all(encoded not in str(widget) for widget in app._session_state.get_widget_states())
+    event(app, "reveal", True)
+    assert base64.b64decode(view(app)["download"]) == result.corrected != original
+    assert source.read_bytes() == original
+    event(app, "reset", True)
+    assert view(app)["report"] is None
 
 
 def test_real_component_upload_reveal_download_bytes_and_reset(eom_fixtures):

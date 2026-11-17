@@ -20,6 +20,61 @@ def invoke(monkeypatch, capsys, *arguments):
     return stopped.value.code, captured.out, captured.err
 
 
+@pytest.mark.parametrize("mode", [None, "styles", "ordinary"])
+def test_body_mode_check_and_fix_use_same_scope(eom_fixtures, tmp_path, monkeypatch, capsys, mode):
+    from docx import Document
+    from docx.shared import Pt
+
+    document = Document(eom_fixtures["good"])
+    paragraph = document.paragraphs[0]
+    paragraph.style = "Normal"
+    paragraph.runs[0].font.name = "Calibri"
+    paragraph.runs[0].font.size = Pt(12)
+    paragraph.paragraph_format.line_spacing = 1
+    source, destination = tmp_path / "source.docx", tmp_path / "copy.docx"
+    document.save(source)
+    original = source.read_bytes()
+    options = ["--document-type", "laboratory_report"]
+    if mode is not None:
+        options += ["--body-text-mode", mode]
+    code, out, err = invoke(monkeypatch, capsys, "check", source, *options)
+    report = json.loads(out)
+    assert not err and report["body_text_mode"] == (mode or "styles")
+    assert report["summary"]["errors"] == (3 if mode == "ordinary" else 0)
+    assert code == (1 if mode == "ordinary" else 3)
+    code, out, err = invoke(monkeypatch, capsys, "fix", source, "--output", destination, *options)
+    result = json.loads(out)
+    assert code == 3 and not err
+    assert result["before"] == report
+    assert result["after"]["body_text_mode"] == (mode or "styles")
+    assert result["after"]["summary"]["errors"] == 0
+    assert source.read_bytes() == original
+    if mode == "ordinary":
+        assert set(result["applied_rules"]) == {"R03", "R04", "R05"}
+        assert destination.read_bytes() != original
+    else:
+        assert result["applied_rules"] == [] and destination.read_bytes() == original
+
+
+@pytest.mark.parametrize("command", ["check", "fix"])
+def test_invalid_body_mode_does_not_leak_value_or_create_copy(
+    tmp_path, monkeypatch, capsys, command
+):
+    destination = tmp_path / "copy.docx"
+    options = ["--output", str(destination)] if command == "fix" else []
+    code, out, err = invoke(
+        monkeypatch,
+        capsys,
+        command,
+        tmp_path / "missing.docx",
+        *options,
+        "--body-text-mode",
+        "PRIVATE_MARKER",
+    )
+    assert code == 2 and not out and not destination.exists()
+    assert "PRIVATE_MARKER" not in err and "Невідомий режим" in json.loads(err)["error"]
+
+
 @pytest.mark.parametrize(
     "arguments", [(), ("--help",), ("check", "--help"), ("fix", "--help"), ("-h",)]
 )

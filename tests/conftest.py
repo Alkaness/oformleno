@@ -19,7 +19,7 @@ def eom_fixtures(tmp_path_factory):
 def body_check(tmp_path):
     """Run a real registered body rule after saving/reopening a generated DOCX."""
 
-    def run(document, rule_id, *, parameters=None):
+    def run(document, rule_id, *, parameters=None, body_text_mode="styles"):
         path = tmp_path / "generated.docx"
         document.save(path)
         ruleset = load_ruleset()
@@ -34,7 +34,12 @@ def body_check(tmp_path):
                     )
                 }
             )
-        report = RuleEngine().check(load_document(path), ruleset, document_type="laboratory_report")
+        report = RuleEngine().check(
+            load_document(path),
+            ruleset,
+            document_type="laboratory_report",
+            body_text_mode=body_text_mode,
+        )
         assert not report.failed_rules
         return tuple(finding for finding in report.findings if finding.rule_id == rule_id)
 

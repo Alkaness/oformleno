@@ -1,5 +1,34 @@
 # T014a Figma design handoff
 
+## T009a ordinary-text mode supplement (2026-11-17)
+
+The user's feedback authorizes this supplement and explicitly selects ordinary
+text as the web default. Existing approved interface/device/landing frames are
+preserved. The selected local TalkToFigma MCP added two native editable boards
+on page `529:2`, below the existing designs:
+
+- [Desktop mode control and report context](https://www.figma.com/design/UscSNH67vwwxTFoaTj2f1h/Untitled?node-id=546-7),
+  `546:7`, width 1440, control width 736.
+- [Mobile mode control and report context](https://www.figma.com/design/UscSNH67vwwxTFoaTj2f1h/Untitled?node-id=546-24),
+  `546:24`, width 390, control width 342.
+
+Both show the two closed selection states: «Звичайний текст» and «За стилями
+документа», their actual Ukrainian explanations, and the report's selected mode.
+The implementation uses a labelled native select, a 48px minimum target, the
+existing border/radius/colors and system font fallback. Figma uses Funnel Sans.
+The original upload frames supply the surrounding form layout.
+
+Document/pages/selection and the existing desktop/mobile upload/report trees
+were inspected before creation. Both node creations and subsequent updates
+reported zero warnings/failures. Readback verified text/layout. Native snapshots
+of desktop and mobile were inspected. The first desktop export omitted Cyrillic
+glyphs despite correct text readback; changing/reinstating the text forced a
+render refresh, and the final desktop export displays the full Ukrainian copy.
+No screenshot from that initial export is counted as a pass. Browser evidence
+and limits are in [ordinary-text-mode-verification.md](ordinary-text-mode-verification.md).
+The boards illustrate the control states; no dropdown interaction is claimed
+in Figma. Functional selection/upload/reset is checked separately in the browser.
+
 Software / DOCX formatting checker. Completed 2026-11-12 under the user's explicit
 T014a approval. This is a Figma mockup and prototype deliverable for T015, T016 and
 the later landing implementation. It does not implement or publish those products.

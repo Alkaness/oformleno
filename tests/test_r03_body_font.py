@@ -16,6 +16,20 @@ from oformleno.loader import load_document
 from oformleno.ruleset import load_ruleset
 
 
+def test_ordinary_mode_finds_calibri_without_departmental_style(eom_fixtures, body_check):
+    document = Document(eom_fixtures["good"])
+    paragraph = document.paragraphs[0]
+    paragraph.style = document.styles["Normal"]
+    paragraph.runs[0].font.name = "Calibri"
+    findings = body_check(document, "R03", body_text_mode="ordinary")
+    assert len(findings) == 1 and findings[0].severity == "error"
+    assert findings[0].actual == {"fonts": ["Calibri"]} and findings[0].fixable
+    assert findings[0].location.paragraph == 1
+    assert findings[0].location.excerpt == paragraph.text[:50]
+    strict = body_check(document, "R03")
+    assert len(strict) == 1 and strict[0].severity == "manual"
+
+
 def test_calibri_acceptance_has_paragraph_excerpt_actual_expected_and_quote(eom_fixtures):
     document = load_document(eom_fixtures["bad_r03"])
     report = RuleEngine().check(document, load_ruleset())
