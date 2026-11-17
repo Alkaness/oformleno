@@ -11,7 +11,7 @@ user: [джерела, рішення та ручні перевірки](specs/
 
 > Статус: прототип (MVP 0.1) у розробці. Командний проєкт з дисципліни «Технології розробки стартапів», Львівська політехніка.
 >
-> Репозиторій приватний. За рішенням user працюємо в Codex без повторного вибору інструмента. Дизайн і мокапи — у Figma через локальний MCP, із застосуванням Taste Skill. Деталі — у [принципах проєкту](memory/constitution.md).
+> Репозиторій публічний за рішенням user від 17.11.2026. Працюємо в Codex без повторного вибору інструмента. Дизайн і мокапи — у Figma через локальний MCP, із застосуванням Taste Skill. Деталі — у [принципах проєкту](memory/constitution.md).
 
 ## Навіщо
 
@@ -40,7 +40,8 @@ user: [джерела, рішення та ручні перевірки](specs/
 ## Швидкий старт
 
 Веб-демо: **[oformleno.streamlit.app](https://oformleno.streamlit.app/)**.
-Працює в браузері без встановлення програм. Репозиторій коду залишається приватним.
+Працює в браузері без встановлення програм.
+Код: [Alkaness/oformleno на GitHub](https://github.com/Alkaness/oformleno).
 
 Після встановлення середовища за інструкцією нижче:
 
@@ -71,11 +72,11 @@ uv run --no-sync streamlit run app/streamlit_app.py --server.address 127.0.0.1
 ### Розгортання на Streamlit Community Cloud (T017)
 
 Для повторного розгортання у [Streamlit Community Cloud](https://share.streamlit.io/) підключіть GitHub
-і доступ до приватного репозиторію, потім оберіть «Create app»:
+і оберіть «Create app»:
 
 | Налаштування | Значення |
 | --- | --- |
-| Repository | `Alkaness/oformleno` — лишається приватним |
+| Repository | `Alkaness/oformleno` — публічний |
 | Branch | `001-mvp-checker` |
 | Main file path | `app/streamlit_app.py` |
 | Advanced settings → Python version | `3.12` |
@@ -93,7 +94,8 @@ uv run --no-sync streamlit run app/streamlit_app.py --server.address 127.0.0.1
 для локального запуску вона задається командою вище.
 
 Після успішного запуску відкрийте Settings → Sharing і зробіть **застосунок**
-загальнодоступним для демо; приватність репозиторію не змінюйте.
+загальнодоступним для демо. Sharing визначає доступ до застосунку окремо
+від видимості репозиторію.
 Перевірте посилання без входу в обліковий запис: завантаження синтетичного
 DOCX, звіт, отримання виправленої копії та очищення.
 [Стан і докази перевірки T017](specs/001-mvp-checker/streamlit-cloud-verification.md).
@@ -422,7 +424,8 @@ staged `.docx`/`.doc` files and runs checks. Use the user-selected
 ## GitHub і CI
 
 Репозиторій: [Alkaness/oformleno](https://github.com/Alkaness/oformleno),
-**Private**, доступ лише user. Співучасників поки не запрошувати.
+**Public**, за рішенням user від 17.11.2026. Співучасників без окремого
+дозволу user не запрошувати. Студентські роботи не додаються до Git.
 
 Робоча гілка MVP — `001-mvp-checker`. GitHub Actions запускає
 [перевірки](.github/workflows/ci.yml) після кожного push і для кожного PR:

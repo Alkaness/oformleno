@@ -1,5 +1,19 @@
 # Current user decisions
 
+- **Repository made public (2026-11-17).** User explicitly requested switching
+  the repository to public and asked for the repository and website links to
+  share for external review. This supersedes the previous private-repository
+  default and is the decision permitted by constitution point 9. GitHub PATCH
+  confirmed `visibility: public`, `private: false` for `Alkaness/oformleno`.
+  Before the change, all reachable history was checked: 124 source/documentation
+  blobs, with no prohibited documents/private artifact paths or detected
+  credential patterns. No real student files were read or published.
+  README, constitution, AGENTS, architecture notes and the current deployment
+  record reflect the new visibility; historical private-state evidence remains
+  historical. Links: https://github.com/Alkaness/oformleno and
+  https://oformleno.streamlit.app/. No collaborator invitation or message to any
+  third party was requested or sent. This is repository administration only;
+  T018 and later implementation remain unauthorized.
 - **T017 complete (2026-11-17).** The user
   supplied https://oformleno.streamlit.app/ and then confirmed public sharing.
   Fresh anonymous browser access and real cloud upload/report/download passed:

@@ -66,7 +66,8 @@ During the session, revisit only the documents needed for the current change.
 
 ## Project boundaries
 
-- GitHub target: private `Alkaness/oformleno`, currently accessible only to user.
+- GitHub target: public `Alkaness/oformleno`, by the user's explicit decision on
+  2026-11-17. This visibility change does not authorize adding student work.
   Do not publish code, packages, or artifacts elsewhere.
 - Never commit student work, including anonymized work. Generate test `.docx`
   files in temporary directories and commit generators only. Do not log document

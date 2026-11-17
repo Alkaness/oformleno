@@ -1,8 +1,10 @@
 # T017: Streamlit Community Cloud verification
 
 Public URL supplied by the user: https://oformleno.streamlit.app/.
-The source repository remains private: `Alkaness/oformleno`, branch
-`001-mvp-checker` (GitHub API verification on 2026-11-17).
+At T017 verification, `Alkaness/oformleno`, branch `001-mvp-checker`, was private
+(GitHub API verification on 2026-11-17). The user subsequently requested public
+visibility for external review; GitHub now confirms it is public. This does not
+change the earlier verification evidence or document privacy requirements.
 
 ## Current status
 
