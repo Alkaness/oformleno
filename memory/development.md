@@ -1,5 +1,51 @@
 # Current user decisions
 
+- **Publication-record continuation (2026-11-18).** User's "continue" resumes
+  the interrupted documentation commit/push and final CI verification. Source
+  commit `384c52a` is already public with passing exact-revision CI; the hosted
+  T018 workflow passed after reboot on 2026-11-17, as recorded below. Only
+  README, memory, deployment evidence and the task checkpoint record remain
+  to publish. Product code is unchanged. Do not interpret this resumption as
+  authorization to skip checkpoint confirmation or start T021–T023.
+- **Hosted T018 verified after reboot (2026-11-17).** User confirmed "Reboot
+  finished". A fresh anonymous browser at20:48:12UTC completed the actual
+  public workflow on source `384c52a42d9a404e71cedadaddcf4dfdc76b41db`:
+  ordinary default/options, real10errors/9fixable/7manual, visible R03–R05
+  and mode explanation, corrected HTML with only R08/0fixable/7manual, clicked
+  saved DOCX identical to Blob, independent reopened check and preservation
+  of original hash, text and non-main ZIP parts. Reset revokes the old Blob
+  and restores ordinary mode. Output SHA matches the local T018 corrected copy.
+  PASS: `tmp/t009a-hosted/hosted-browser-evidence.json`; the first failed run
+  remains separately archived. Desktop screenshots inspected, 390px capture
+  proves control presence only. Owned browsers/profiles closed/removed.
+  No product code changed between failed and passing hosted runs. Reboot
+  resolves the observation; cached Python imports remain an inferred cause.
+  README now gives the exact reboot operation after sync, and the deployment
+  report/task checkpoint evidence reflects the successful result. Publication
+  follow-up changes documentation only. Exact-source CI passed as recorded
+  below. The technical stage-3 evidence is ready, but user confirmation of
+  that checkpoint is not inferred from earlier commit/push approval. Do not
+  start T021–T023; holdout intake remains empty and needs new works.
+  Read-only Sol review of the verifier, JSON/reference and source CI found no
+  material evidence gap; final docs retain the initial failure and success.
+  Host UI exposes no Git SHA: association to the pushed source is based on the
+  configured deployment branch and observed behavior, not host checkout access.
+- **Source pushed; hosted reboot pending (2026-11-17).** Approved source commit
+  `384c52a42d9a404e71cedadaddcf4dfdc76b41db` is pushed to the existing deployment
+  branch. Mandatory hook passed document guard, Ruff, 89-file formatting and
+  872 tests. Exact-SHA GitHub CI run44172072703 succeeded at20:43:37UTC:
+  https://github.com/Alkaness/oformleno/actions/runs/44172072703.
+  Fresh anonymous public check saw ordinary as default and both mode options,
+  but the actual upload returned the sanitized unreadable-upload error and no
+  report. Archived as FAIL under `tmp/t009a-hosted/before-reboot/`; it must not
+  count as a hosted pass. New UI plus the old-contract-like rejection suggests
+  cached Python imports with fileWatcherType=none; this is an inference, not a
+  direct server-state observation. Official Streamlit guidance supports reboot
+  to clear app memory. No connected existing-Streamlit restart control was found
+  through plugin discovery. User has an async request to reboot via their signed-in
+  workspace. On confirmation, repeat the full anonymous T018 upload/download/
+  preservation/reset check. Do not change working code or claim stage3 passed
+  merely because the new control is visible. See `feedback-deployment-verification.md`.
 - **Publication approved (2026-11-17).** User explicitly replied "i approve
   committing and pushing" to the concrete local T009a and T018–T020 changes
   and the proposed public-demo verification. Commit and push the reviewed
