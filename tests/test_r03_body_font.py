@@ -1,6 +1,7 @@
 """Body font acceptance, inheritance, slot selection and conservative role detection."""
 
 from io import BytesIO
+from zipfile import ZipFile
 
 import pytest
 from docx import Document
@@ -12,8 +13,57 @@ from docx.shared import Pt
 from fixtures.make_fixtures import BODY_BASE_STYLE, BODY_STYLE, CASES
 
 from oformleno.engine import RuleEngine
+from oformleno.fixer import fix_document_bytes
 from oformleno.loader import load_document
 from oformleno.ruleset import load_ruleset
+
+
+@pytest.mark.parametrize("mode", ["styles", "ordinary"])
+@pytest.mark.parametrize("font", ["Times New Roman", "Cambria Math"])
+@pytest.mark.parametrize("text", ["x ∈ A; ∀ x ∑ x ≥ 0", "⊕"])
+def test_unicode_math_in_body_text_is_checked_and_fixed_in_a_preserved_copy(
+    eom_fixtures, tmp_path, mode, font, text
+):
+    document = Document(eom_fixtures["good"])
+    paragraph = document.paragraphs[0]
+    if mode == "ordinary":
+        paragraph.style = document.styles["Normal"]
+        paragraph.paragraph_format.line_spacing = 1.5
+    run = paragraph.runs[0]
+    run.text = text
+    run.font.name, run.font.size = font, Pt(14)
+    fonts = run._r.rPr.rFonts
+    fonts.set(qn("w:ascii"), "Times New Roman")
+    fonts.set(qn("w:cs"), "Unused Complex Font")
+    path = tmp_path / "generated.docx"
+    document.save(path)
+    original = path.read_bytes()
+    result = fix_document_bytes(original, load_ruleset(), body_text_mode=mode)
+    found = [f for f in result.before.findings if f.rule_id == "R03"]
+    if font == "Cambria Math":
+        assert len(found) == 1 and found[0].severity == "error" and found[0].fixable
+        assert found[0].actual == {"fonts": ["Cambria Math"]}
+        assert result.applied_rules == ("R03",)
+    else:
+        assert found == [] and result.document_bytes == original
+    assert not [f for f in result.after.findings if f.rule_id in {"R03", "R04"}]
+    corrected = Document(BytesIO(result.document_bytes))
+    assert [node.text for node in corrected.element.iter(qn("w:t"))] == [
+        node.text for node in document.element.iter(qn("w:t"))
+    ]
+    corrected_fonts = corrected.paragraphs[0].runs[0]._r.rPr.rFonts
+    assert corrected_fonts.get(qn("w:cs")) == "Unused Complex Font"
+    assert path.read_bytes() == original
+    with ZipFile(BytesIO(original)) as before, ZipFile(BytesIO(result.document_bytes)) as after:
+        assert before.namelist() == after.namelist()
+        assert all(
+            before.read(name) == after.read(name)
+            for name in before.namelist()
+            if name != "word/document.xml"
+        )
+    assert fix_document_bytes(
+        result.document_bytes, load_ruleset(), body_text_mode=mode
+    ).document_bytes == (result.document_bytes)
 
 
 def test_ordinary_mode_finds_calibri_without_departmental_style(eom_fixtures, body_check):

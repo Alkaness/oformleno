@@ -39,6 +39,17 @@ def test_inherited_break_and_direct_false_with_source(eom_fixtures, body_check):
     assert item.parameter_sources
 
 
+def test_unlisted_structural_style_title_uses_the_same_page_start_role(eom_fixtures, body_check):
+    document = Document(eom_fixtures["good"])
+    paragraph = heading(document)
+    paragraph.runs[0].text = "Перелік таблиць"
+    assert body_check(document, "R07") == ()
+    paragraph.paragraph_format.page_break_before = False
+    found = body_check(document, "R07")
+    assert len(found) == 1 and found[0].severity == "error" and not found[0].fixable
+    assert found[0].actual == {"start_on_new_page": False}
+
+
 @pytest.mark.parametrize("position", ["tail", "prefix", "empty", "hyperlink"])
 def test_explicit_page_breaks_without_inherited_flag(eom_fixtures, body_check, position):
     document = Document(eom_fixtures["bad_r07"])

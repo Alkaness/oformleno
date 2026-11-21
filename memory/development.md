@@ -1,5 +1,145 @@
 # Current user decisions
 
+- **Publication continuation authorized (2026-11-21).** User said “continue”
+  immediately after the completed T022/T023 result and “Ready for commit and
+  push.” Proceed with publication of the reviewed T021/T021a/T022/T023 source,
+  tests and documentation only to existing public Alkaness/oformleno branch
+  001-mvp-checker. This resumes the concrete proposed commit/push step; the
+  branch also updates the existing Streamlit deployment. Audit paths/content,
+  preserve private artifacts and baseline validation evidence, commit with the
+  mandatory hook, push without force, verify exact-SHA CI and run the real
+  anonymous generated-document upload/fix/download/reset workflow. Record only
+  observed results. Track this release as T024, without new product features,
+  survey collection, student-work publication, R09fix or visual redesign.
+- **T022 and T023 complete locally (2026-11-18).** T023 updates only current
+  README/spec survey/scope prose and completion notes: supplied24responses,
+  67%lostpoints,13/24distrust, IT14/24, secondyear17/24. Sample-only inference
+  explicit; additional15–20other-specialty responses are not invented or
+  collected. Unrefreshed3.9/3.8/2.7mean claims removed from current summary.
+  Source described as supplied aggregate, no rawresponseaudit claim. Intro,
+  users and scenario consistently oneEOMprofile; inactiveAFMreference and
+  intendedpublicGitHub unchanged. Read-only Sol review has no findings; stale
+  survey claims absent in both files;52local links resolve, guard/whitespace
+  pass. No runtime changes after931fulltests/121targeted T022 pass, so unchanged
+  suite not repeated for prose. Final full-width screenshots1440/1024/820/768/
+  390 also inspected; all native controls/evidence/print checks pass. Generic
+  visual gate remains exactlyFAIL30round1, not an overall visual pass; exact
+  open targets and scope in manual-findings-verification.md. Both authorized
+  tasks now checked. No commit/push/deploy/newCI, new research, R09fix or
+  secondruleset. Report completion and leave publication/further work to a
+  subsequent user instruction. All earlier validation/fix changes stay local.
+- **T022 complete; T023 now active (2026-11-18).** One initially closed
+  secondary 'Перевірте самі' block with compact rule disclosures now preserves
+  every finding/evidence/location/value and original Report/JSON. Error list
+  and copy actions retain prominence. Native summary keyboard, focus, embedded
+  link expansion, rerender/reset, actual corrected Blob bytes, zero-error
+  incomplete notice and1357findings pass. Chrome147 print/PDF includes evidence
+  inside both closed levels. First sandbox/probe failures are archived; fresh
+  profile + activated offline tab pass. No second browser was launched by the
+  CDP probe; unmodified Taste scripts own browser lifetime.931fulltests and
+  121targeted passed; Ruff93formatted, JS syntax/guard/whitespace pass.
+  Selected MCP inspected original Figma; final new states553:197/59/111/144
+  visually verified, originals preserved. First desktop draft with incomplete
+  Cyrillic export hidden; final closed state derives from verified open frame.
+  Responsive shots1440/1024/820/768/390 inspected,320narrowwalk zero findings.
+  Generic consistency142FAIL/36WARN, layout18edgeheuristics, gateFAIL30round1;
+  all retained in manual-findings-verification.md. User-requested disclosure
+  takes precedence over generic no-accordion recipe; no kit edits/waivers or
+  claim of visual gate pass. Standalone HTML perf0FAIL/0WARN; exact-evidence
+  punctuation copy WARN kept. No real works accessed, commit/push/deploy/newCI.
+  Continue only authorized T023 doc corrections, no further runtime/design work.
+- **T022 then T023 authorized (2026-11-18).** User said “do the two planned
+  tasks then” after the remaining-work summary. Finish T022 grouped manual
+  findings first, then T023 survey corrections/sample limits/EOM scope, one
+  task at a time. T022 changes presentation only: preserve every reason,
+  quotation/location/value and JSON finding; keep errors/copy actions primary.
+  Apply selected local Figma+Taste workflow for report design. Continue to
+  T023 after T022 verification without another approval request. No commit,
+  push/deployment, outreach/new survey data, new holdout or R09fix authorized
+  by this instruction. Earlier work remains in the working tree.
+- **T021a complete locally (2026-11-18).** Minimal runtime changes: model
+  supports ordinary U2200–22FF MathOperators through existing guarded hAnsi
+  resolution; R06 recognizes configured structural-style ancestry as an
+  alternative to literal title, preserving field/numbering/role uncertainty.
+  R07 shares the guarded role and remains check-only. No YAML, quote or
+  dependency changes. Spec/source notes record prior user clarifications.
+  Generated regressions first reproduced misses; 30 added cases now pass.
+  Read-only Sol exploration confirms25plainU2295runs/no localfieldblock in
+  the5fontmisses. Independent R03/model and R06/edge/fix reviews have no
+  blocking findings.232targetedtests passed; required fullchecks exit0:
+  Ruff,92formatted,927pytest onPython3.12.3. Whitespace/documentguard pass.
+  Private regression runtime dbe1a1de… at17:20:30–17:20:42UTC used identical
+  baseline labels/artifacts with explicitly derived runtime binding; baseline
+  ref/run/score hashes remain unchanged.127/127errors supported, core38/38,
+  all15misses recovered,1429manual. Five saved/reopened copies have zero
+  R01–R06errors and89residualR08/R09errors. Independent ZIP/XML comparison
+  preserves tables, field instructions/markers, nonformatting content and
+  other package payloads. All8originals+5selectedcopies remain unchanged.
+  Evidence: `private/t014b/regression-2026-11-18/`; public detailed note
+  `specs/001-mvp-checker/holdout-regression.md`. No Word/LOrendering claim;
+  original60.53% independent result stays intact; these5nowdevelopmentdata.
+  No commit/push/deployment/newCI or T022/T023/R09fix. Report this authorized
+  task's completion; later work/publication needs its own authorization.
+- **T021a defect fixes authorized (2026-11-18).** User replied “fix those”
+  to the five missed R03 font violations and ten missed R06 structural-style
+  headings. Implement only these two gaps and their copy-fix/preservation
+  coverage as T021a; keep original T021 reference/run/results immutable.
+  Add generated regression cases, rerun the five now-development works against
+  unchanged reference labels and disclose the new run as regression evidence.
+  Keep uncertain roles/fields/font mappings manual; no source/YAML tuning to
+  improve the score. Record the already-approved reference clarifications in
+  spec/source notes. T022/T023 and a new commit/push/deployment remain outside
+  this authorization. Main agent owns edits; Sol handles bounded read-only
+  font exploration/review because the preferred Luna is unavailable.
+- **T021 complete; recall target failed (2026-11-18).** New evidence and full
+  protocol: `specs/001-mvp-checker/holdout-validation.md`. First5 eligible of8
+  private DOC inputs converted via LO24.2.7.2; originals/copies unchanged,
+  no exact/near development duplicates, template/author limitations explicit.
+  Core reference sealed11:39:23UTC, blind noncore supplement11:43:51UTC;
+  first unchanged ordinary/laboratory_report run11:43:59–11:44:02UTC on
+  product4c5bbab5, runtime977919d5…, YAML unchanged. Final reference canonical
+  SHA6a050a9d… binds run and score. All112 automatic findings independently
+  supported,0FP; core23TP/15FN =>60.5263% recall, below80%. Five R03 font
+  violations got manual; ten semantic structural-style headings outside
+  literal YAML got noR06finding. Known additional R09 manual miss is outside
+  core recall.1475manual; no failed/unavailable rules. This is AI-assisted
+  blinded OOXML research; no full human expert attestation, real unstyled
+  document coverage, population accuracy, original-DOC fidelity or fix/Word
+  testing is claimed.
+  Read-only Sol review independently verified all112 property matches, hashes,
+  chronology and arithmetic; no blocking findings. New scorer fails closed;
+  25 synthetic cases, full required checks exit0: Ruff,92formatted,897pytest.
+  README/evaluation distinguish developmental T014100% from T021 baseline.
+  All documents, annotations and run artifacts remain ignored/private.
+  No product/YAML/dependency changes, commit/push/newCI/publication or later
+  task. Stop after reporting T021. User must authorize defect fixes or T022;
+  this holdout becomes development data if used to fix its discovered gaps.
+- **T021 reference clarifications (2026-11-18).** Before any checker run, user
+  explicitly answered “Apply R06 to these structural headings” for the ten
+  table-list/bibliography headings carrying the departmental structural style,
+  despite titles outside the literal YAML list. User also answered “Times New
+  Roman is required there” for ordinary Word runs declaring Cambria Math in
+  holdout-01 paragraphs77–81. Apply both decisions to the independent reference;
+  do not alter runtime rules/YAML to match them. Freeze the complete R01–R06
+  reference before running the unchanged checker, then report actual misses.
+  These are reference applicability decisions, not human attestation of every
+  XML label or authorization to tune, commit, push, or begin T022.
+- **Stage-3 accepted; T021 authorized (2026-11-18).** User answered
+  "1. approve 2. did so" to accepting the demo checkpoint and placing new works
+  in the private holdout inbox. Stage-3 confirmation is complete; begin only
+  T021 independent validation. Author permission was already confirmed and must
+  not be requested again. Inbox inventory found eight distinct OLE `.doc`
+  inputs and no DOCX; offline conversion of private copies is necessary
+  preparation, with originals preserved and conversion provenance explicit.
+  Do not claim native DOC support or conversion fidelity. Before any checker
+  run on these works, freeze current revision/ordinary mode, audit novelty
+  against the prior development corpus, predeclare selection of up to five,
+  and establish independent reference labels. Keep original/copy text, names,
+  reports and annotation artifacts private; public notes may contain generic
+  IDs and aggregate results only. No rule/YAML tuning, next task, new commit,
+  push or publication is authorized by this approval. A Sol read-only workflow
+  review substitutes for unavailable Luna, disclosed to user; it reads no
+  private works or their checker output. Main agent owns edits and data.
 - **Publication-record continuation (2026-11-18).** User's "continue" resumes
   the interrupted documentation commit/push and final CI verification. Source
   commit `384c52a` is already public with passing exact-revision CI; the hosted

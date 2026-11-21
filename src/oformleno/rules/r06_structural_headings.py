@@ -57,7 +57,7 @@ def _parameters(rule, ruleset):
     return values
 
 
-def _role(model, paragraph, rule, ruleset):
+def _role(model, paragraph, rule, ruleset, *, named=True):
     chain = model.paragraph_style_chain(paragraph)
     if not chain.resolved:
         return chain.reason
@@ -81,7 +81,15 @@ def _role(model, paragraph, rule, ruleset):
             for other in ruleset.rules
             if other.id in {"R08", "R09", "R10"} and isinstance(other.params.get("style"), str)
         }
-        excluded |= {"еом: основний", "body text", "caption", "title", "subtitle"}
+        excluded |= {
+            "еом: основний",
+            "body text",
+            "caption",
+            "title",
+            "subtitle",
+            "toc heading",
+            "еом: програма",
+        }
         for other in ruleset.rules:
             aliases = other.params.get("body_styles", [])
             if other.id in {"R03", "R04", "R05"} and isinstance(aliases, list):
@@ -90,13 +98,26 @@ def _role(model, paragraph, rule, ruleset):
         for name in names:
             if name in excluded or re.fullmatch(r"toc [1-9]", name):
                 return "Назва структурної частини має суперечливу роль стилю."
-            if name in recognized or re.fullmatch(r"heading [1-9]", name):
+            if name in recognized:
                 return None
+            if re.fullmatch(r"heading [1-9]", name):
+                return None if named else "Стиль розділу суперечить ролі структурної частини."
         if outline not in (None, "9"):
             return None
         return "Роль структурного заголовка не підтверджено стилем або рівнем структури."
     except ValueError as error:
         return str(error)
+
+
+def _has_structural_style(model, paragraph, rule):
+    chain = model.paragraph_style_chain(paragraph)
+    if not chain.resolved:
+        return False
+    try:
+        expected = _key(rule.params["style"])
+        return any(_key(_value(style, "w:name") or "") == expected for style in chain.value)
+    except ValueError:
+        return False
 
 
 def heading_paragraphs(model, rule, ruleset):
@@ -105,13 +126,17 @@ def heading_paragraphs(model, rule, ruleset):
     for index, paragraph in enumerate(model.paragraphs, 1):
         runs = model.runs(paragraph)
         text = "".join(run.text for run in runs)
-        if _key(text) not in titles:
+        if not text.strip() and paragraph._p not in field_uncertainties:
+            continue
+        named = _key(text) in titles
+        if not named and not _has_structural_style(model, paragraph, rule):
             continue
         yield TextParagraph(
             paragraph,
             Location(paragraph=index, excerpt=text[:50] or None),
             tuple(run for run in runs if run.text),
-            _role(model, paragraph, rule, ruleset) or field_uncertainties.get(paragraph._p),
+            _role(model, paragraph, rule, ruleset, named=named)
+            or field_uncertainties.get(paragraph._p),
         )
 
 

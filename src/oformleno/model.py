@@ -430,7 +430,14 @@ class DocumentModel:
             code = ord(character)
             if code < 128:
                 used.add("ascii")
-            elif code <= 0x052F or 0x1E00 <= code <= 0x1EFF or 0x2000 <= code <= 0x20CF:
+            elif (
+                code <= 0x052F
+                or 0x1E00 <= code <= 0x1EFF
+                or 0x2000 <= code <= 0x20CF
+                # MS-OI29500 §2.1.88: plain Mathematical Operators use hAnsi;
+                # the existing hint/complex-script guards still apply.
+                or 0x2200 <= code <= 0x22FF
+            ):
                 used.add("hAnsi")
             else:
                 raise _Unresolved("Символьний набір фрагмента потребує ручної перевірки.")

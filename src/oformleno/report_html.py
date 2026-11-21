@@ -136,7 +136,7 @@ p { margin: 12px 0; }
   border-radius: 12px; }
 .summary h2 { font-size: 24px; }
 .summary-intro { font-size: 20px; line-height: 1.5; }
-.summary .counts { margin: 16px 0; padding: 0; list-style: none; }
+.summary .counts { margin: 16px 0; padding: 0; list-style: none; font-size: 14px; }
 .summary .counts li { margin-block: 8px; }
 .notice { color: var(--manual); }
 .findings { grid-column: 1; grid-row: 1; min-width: 0; }
@@ -145,6 +145,8 @@ a { color: inherit; text-underline-offset: 4px; text-decoration-thickness: 1px; 
 nav a, .summary a { display: inline-flex; align-items: center; min-height: 44px; }
 a:hover { text-decoration-thickness: 2px; }
 a:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 2px; }
+summary { cursor: pointer; list-style-position: inside; }
+summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 2px; }
 .skip-link { position: absolute; left: 24px; top: -100px; background: #dafa9c;
   color: var(--ink); padding: 12px 16px; z-index: 10; }
 .skip-link:focus { top: 8px; }
@@ -154,6 +156,18 @@ a:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-rad
 .group-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 12px; }
 .rule-id { font-size: 14px; color: var(--error); }
 .manual-group .rule-id { color: var(--manual); }
+.manual-review { border-top: 1px solid var(--border); }
+.manual-summary { padding-block: 16px; min-height: 64px; }
+.manual-summary h2 { display: inline; font-size: 20px; margin: 0; }
+.manual-summary > .meta { display: block; margin-top: 8px; }
+.manual-summary:hover, .manual-group > summary:hover { background: var(--surface); }
+.manual-content > p { font-size: 14px; color: var(--muted); }
+.manual-group { border-bottom: 1px solid var(--border); }
+.manual-group > summary { display: list-item; padding-block: 12px; min-height: 48px; }
+.manual-group h3 { display: inline; font: 400 16px/1.5 "Funnel Sans", system-ui, sans-serif; }
+.manual-group .rule-id { margin-right: 8px; color: var(--muted); }
+.manual-group summary > .meta { display: block; margin-top: 4px; }
+.manual-items { padding-bottom: 16px; }
 .finding { padding-top: 16px; }
 .finding + .finding { margin-top: 24px; border-top: 1px solid var(--border); }
 .location { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
@@ -188,6 +202,10 @@ blockquote { margin: 16px 0 8px; font-size: 16px; }
 @media print { .wrap { width: 100%; } main { padding: 24px 0; }
   .columns { display: block; } .summary { margin-bottom: 24px; }
   nav, .skip-link { display: none; } .finding { break-inside: avoid; }
+  details::details-content { display: block; content-visibility: visible; }
+  details > :not(summary) { display: block !important; }
+  summary { display: block !important; break-after: avoid; }
+  summary::marker { content: ""; }
   .rule-group { border-radius: 0; } }
 """
 
@@ -308,11 +326,17 @@ def _groups(findings: list[Finding], *, manual: bool = False) -> str:
     result = ""
     for rule_id, items in groups.items():
         name = items[0].rule_name or "Правило без назви"
-        kind = " manual-group" if manual else ""
-        result += f'<article class="rule-group{kind}"><div class="group-heading">'
-        result += f'<span class="rule-id">{_text(rule_id)}</span><h3>{_text(name)}</h3></div>'
-        result += f'<p class="meta">Кількість висновків: {len(items)}</p>'
-        result += "".join(_finding(item) for item in items) + "</article>"
+        if manual:
+            result += '<details class="manual-group"><summary class="group-heading">'
+            result += f'<span class="rule-id">{_text(rule_id)}</span><h3>{_text(name)}</h3>'
+            result += f'<span class="meta">Кількість висновків: {len(items)}</span></summary>'
+            result += '<div class="manual-items">'
+            result += "".join(_finding(item) for item in items) + "</div></details>"
+        else:
+            result += '<article class="rule-group"><div class="group-heading">'
+            result += f'<span class="rule-id">{_text(rule_id)}</span><h3>{_text(name)}</h3></div>'
+            result += f'<p class="meta">Кількість висновків: {len(items)}</p>'
+            result += "".join(_finding(item) for item in items) + "</article>"
     return result
 
 
@@ -355,35 +379,36 @@ def render_report_html(report: Report) -> str:
     body += f'<p class="summary-intro">Знайдено {summary.errors} {error_word}, '
     body += f"{summary.fixable} можна виправити автоматично.</p>"
     body += f'<ul class="counts"><li>Попередження: {summary.warnings}</li>'
-    body += f'<li class="notice">Перевірте вручну: {summary.manual}</li></ul>'
+    body += f'<li class="notice">Перевірте самі: {summary.manual}</li></ul>'
     body += "<p>Звіт охоплює перевірку форматування. Повний нормоконтроль потребує "
     body += "окремого перегляду.</p>"
     if summary.manual or summary.status == "manual_required":
         body += '<p class="notice">Перевірку не завершено: потрібен ручний перегляд.</p>'
     if summary.manual:
-        body += '<a href="#manual">Переглянути ручні перевірки</a>'
+        body += '<a href="#manual">Перейти до «Перевірте самі»</a>'
     body += '</aside><div class="findings">'
-    body += '<nav aria-label="Розділи звіту"><a href="#findings">Помилки та попередження</a>'
-    body += '<a href="#manual">Ручні перевірки</a></nav>'
     body += '<section id="findings" class="report-section" aria-labelledby="findings-title">'
     body += '<h2 id="findings-title">Помилки та попередження</h2>'
     if findings:
         body += _groups(findings)
     else:
         body += "<p>Автоматичних помилок і попереджень не знайдено.</p>"
-    body += '</section><section id="manual" class="report-section" aria-labelledby="manual-title">'
-    body += f'<h2 id="manual-title">Ручні перевірки · {summary.manual}</h2>'
-    body += "<p>Ручні висновки не зараховуються як знайдені помилки й не виправляються "
-    body += "автоматично.</p>"
-    body += f"<p>Пункти переліку ЕОМ: {len(checklist)}. "
-    body += f"Інші ручні висновки: {len(uncertainties)}.</p>"
-    if checklist:
-        body += _groups(checklist, manual=True)
-    if uncertainties:
-        body += _groups(uncertainties, manual=True)
-    if not checklist and not uncertainties:
-        body += "<p>У звіті немає ручних висновків.</p>"
-    body += '</section><section class="coverage" aria-labelledby="coverage-title">'
+    body += "</section>"
+    if summary.manual:
+        body += '<details id="manual" class="report-section manual-review" '
+        body += 'aria-labelledby="manual-title"><summary class="manual-summary">'
+        body += '<h2 id="manual-title">Перевірте самі</h2>'
+        body += f'<span class="meta">Висновків: {summary.manual}</span></summary>'
+        body += '<div class="manual-content">'
+        body += "<p>Ручні висновки не зараховуються як знайдені помилки й не виправляються "
+        body += "автоматично.</p>"
+        body += f"<p>Пункти переліку ЕОМ: {len(checklist)}. "
+        body += f"Інші ручні висновки: {len(uncertainties)}.</p>"
+        body += _groups(checklist, manual=True) + _groups(uncertainties, manual=True)
+        body += "</div></details>"
+    else:
+        body += '<p id="manual" class="meta">У звіті немає ручних висновків.</p>'
+    body += '<section class="coverage" aria-labelledby="coverage-title">'
     body += '<h2 id="coverage-title">Охоплення перевірки</h2>'
     for label, rules in (
         ("Виконані автоматичні перевірки", report.checked_rules),

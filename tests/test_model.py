@@ -324,6 +324,28 @@ def test_unsupported_scripts_need_review(generated, tmp_path, text):
     assert not formatting.size_pt.resolved
 
 
+@pytest.mark.parametrize("text", ["\u2200", "\u2211", "\u2295", "\u22ff"])
+def test_plain_math_operators_use_the_declared_high_ansi_font(generated, tmp_path, text):
+    document, _, run, *_ = generated
+    run.text = text
+    child(run._r.get_or_add_rPr(), "rFonts", ascii="Unused Font", hAnsi="Cambria Math")
+    model = reopened(document, tmp_path)
+    formatting = model.run_formatting(model.runs(model.paragraphs[0])[0])
+    assert formatting.slots.value == ("hAnsi",)
+    assert formatting.fonts["hAnsi"].value == "Cambria Math"
+    assert formatting.size_pt.value == 10
+
+
+@pytest.mark.parametrize("hint", ["eastAsia", "unknown"])
+def test_math_operators_do_not_override_ambiguous_font_hints(generated, tmp_path, hint):
+    document, _, run, *_ = generated
+    run.text = "∑"
+    child(run._r.get_or_add_rPr(), "rFonts", hint=hint, hAnsi="Cambria Math", eastAsia="Other Font")
+    model = reopened(document, tmp_path)
+    formatting = model.run_formatting(model.runs(model.paragraphs[0])[0])
+    assert not formatting.slots.resolved
+
+
 def test_revision_and_foreign_document_are_not_resolved(generated, tmp_path):
     document, paragraph, run, *_ = generated
     change = child(paragraph._p, "ins")

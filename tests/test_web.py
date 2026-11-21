@@ -117,7 +117,8 @@ def test_ui_transitions_use_current_counts_and_reset_every_retained_result(eom_f
     web.reveal_copy(state)
     after = web.view_data(state)
     assert after["ready"] and not after["can_reveal"]
-    assert "Знайдено 0 помилок" in after["report"] and "Ручні перевірки · 7" in after["report"]
+    assert "Знайдено 0 помилок" in after["report"]
+    assert "Перевірте самі" in after["report"] and "Висновків: 7" in after["report"]
     assert base64.b64decode(after["download"]) == state.result.corrected
     web.clear_result(state)
     assert web.view_data(state) == {"revision": 3, "error": None, "report": None}

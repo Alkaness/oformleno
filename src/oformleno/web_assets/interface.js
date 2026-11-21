@@ -90,8 +90,12 @@ export default function ({ parentElement, data, setTriggerValue }) {
         const target = root.querySelector(link.getAttribute("href"));
         if (target) {
           event.preventDefault();
-          target.tabIndex = -1;
-          target.focus({ preventScroll: true });
+          for (let ancestor = target; ancestor && ancestor !== root; ancestor = ancestor.parentElement) {
+            if (ancestor.tagName === "DETAILS") ancestor.open = true;
+          }
+          const focusTarget = target.tagName === "DETAILS" ? target.querySelector("summary") : target;
+          if (focusTarget.tagName !== "SUMMARY") focusTarget.tabIndex = -1;
+          focusTarget.focus({ preventScroll: true });
           target.scrollIntoView({ behavior: "instant", block: "start" });
         }
       });

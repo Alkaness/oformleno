@@ -134,7 +134,7 @@ def test_html_format_outputs_complete_report_with_same_exit_semantics(
     assert code == expected_code and err == ""
     assert out.startswith("<!doctype html>") and tree.get("lang") == "uk"
     assert "Звіт про оформлення" in tree.text_content()
-    assert "Перевірте вручну: 7" in tree.text_content()
+    assert "Перевірте самі: 7" in tree.text_content()
     assert str(source) not in out and source.name not in out
     assert source.read_bytes() == original
 

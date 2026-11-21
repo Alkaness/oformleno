@@ -1,5 +1,37 @@
 # T014a Figma design handoff
 
+## T022 grouped manual findings supplement (2026-11-18)
+
+User authorized T022 presentation changes. Existing approved frames are preserved.
+Four new editable states on page `529:2` show the corrected-copy report with one
+residual R08 error, a primary download action and seven secondary manual findings:
+
+- [Desktop, collapsed](https://www.figma.com/design/UscSNH67vwwxTFoaTj2f1h/Untitled?node-id=553-197),
+  `553:197`, 1440×1057.
+- [Desktop, expanded](https://www.figma.com/design/UscSNH67vwwxTFoaTj2f1h/Untitled?node-id=553-59),
+  `553:59`, 1440×1675.
+- [Mobile, collapsed](https://www.figma.com/design/UscSNH67vwwxTFoaTj2f1h/Untitled?node-id=553-111),
+  `553:111`, 390×1617.
+- [Mobile, expanded](https://www.figma.com/design/UscSNH67vwwxTFoaTj2f1h/Untitled?node-id=553-144),
+  `553:144`, 390×2400.
+
+The selected local TalkToFigma MCP inspected the document/pages/selection and
+existing report/manual frames. Creation and updates reported no warnings or
+per-node failures. Desktop row sizing initially clipped children; readback and
+new snapshots verify corrected HUG heights. An initial collapsed desktop export
+omitted Cyrillic despite correct text metadata. That new draft is hidden;
+the final collapsed state derives from the verified expanded frame, with its
+manual content hidden and its control closed. Its native snapshot displays all
+Ukrainian glyphs. Initial failed exports are not counted as successful evidence.
+
+Final desktop and mobile snapshots, including a full-resolution mobile evidence
+region, were visually inspected for wrapping, clipping, hierarchy and readable
+source text. The existing white/soot/surface palette, Funnel typography and
+80/24 px gutters are retained. Manual controls use neutral separators and smaller
+headings; error cards and download retain prominence. These are static disclosure
+states, not tested Figma interactions. Browser keyboard, focus, printing and
+report/reset behavior are verified separately for T022.
+
 ## T009a ordinary-text mode supplement (2026-11-17)
 
 The user's feedback authorizes this supplement and explicitly selects ordinary

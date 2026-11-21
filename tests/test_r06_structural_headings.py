@@ -72,11 +72,15 @@ def contents_between_titles(document, *, command="TOC", nested=False):
 
 
 @pytest.mark.parametrize("nested", [False, True])
+@pytest.mark.parametrize("unlisted", [False, True])
 def test_literal_titles_at_complete_toc_boundaries_are_fixed_without_field_edits(
-    eom_fixtures, tmp_path, nested
+    eom_fixtures, tmp_path, nested, unlisted
 ):
     document = Document(eom_fixtures["good"])
-    contents_between_titles(document, nested=nested)
+    first, _entry, last = contents_between_titles(document, nested=nested)
+    if unlisted:
+        first.runs[0].text = "Перелік таблиць"
+        next(run for run in last.runs if run.text).text = "Використані джерела"
     source = tmp_path / "source.docx"
     document.save(source)
     original = source.read_bytes()
@@ -509,13 +513,143 @@ def test_known_heading_with_other_style_is_corrected_without_assigning_eom_style
     assert fixed.paragraphs[1].text == "Вступ"
 
 
-def test_unknown_names_and_absent_structural_parts_are_not_required(eom_fixtures, body_check):
+def test_unknown_generic_headings_and_absent_structural_parts_are_not_required(
+    eom_fixtures, body_check
+):
     document = Document(eom_fixtures["good"])
     for paragraph in document.paragraphs:
         if paragraph.style.name == load_ruleset().rules[5].params["style"]:
             paragraph.runs[0].text = "Інший заголовок"
+            paragraph.style = document.styles["Heading 1"]
             paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
     assert body_check(document, "R06") == ()
+
+
+@pytest.mark.parametrize("title", ["Перелік таблиць", "Використані джерела"])
+@pytest.mark.parametrize("derived", [False, True])
+def test_structural_style_identifies_unlisted_titles_and_fixes_a_preserved_copy(
+    eom_fixtures, tmp_path, title, derived
+):
+    document = Document(eom_fixtures["good"])
+    paragraph = heading(document)
+    paragraph.runs[0].text = title
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    if derived:
+        style = document.styles.add_style("Synthetic Structural Child", WD_STYLE_TYPE.PARAGRAPH)
+        style.base_style = paragraph.style
+        paragraph.style = style
+    original_style = paragraph.style.style_id
+    path = tmp_path / "generated.docx"
+    document.save(path)
+    original = path.read_bytes()
+    result = fix_document_bytes(original, load_ruleset(), body_text_mode="ordinary")
+    found = [f for f in result.before.findings if f.rule_id == "R06"]
+    assert len(found) == 1 and found[0].severity == "error" and found[0].fixable
+    assert found[0].actual == {"align": "center"} and found[0].location.paragraph == 2
+    assert result.applied_rules == ("R06",)
+    assert not [f for f in result.after.findings if f.rule_id in {"R06", "R07"}]
+    corrected = Document(BytesIO(result.document_bytes))
+    assert corrected.paragraphs[1].alignment == WD_ALIGN_PARAGRAPH.JUSTIFY
+    assert corrected.paragraphs[1].style.style_id == original_style
+    assert [node.text for node in corrected.element.iter(qn("w:t"))] == [
+        node.text for node in document.element.iter(qn("w:t"))
+    ]
+    assert path.read_bytes() == original
+    with ZipFile(BytesIO(original)) as before, ZipFile(BytesIO(result.document_bytes)) as after:
+        assert before.namelist() == after.namelist()
+        assert all(
+            before.read(name) == after.read(name)
+            for name in before.namelist()
+            if name != "word/document.xml"
+        )
+    assert fix_document_bytes(result.document_bytes, load_ruleset()).document_bytes == (
+        result.document_bytes
+    )
+
+
+@pytest.mark.parametrize(
+    "context", ["toc_cache", "numbering", "caption", "program", "generic_heading"]
+)
+def test_unlisted_structural_style_keeps_conflicting_roles_and_field_results_manual(
+    eom_fixtures, context
+):
+    document = Document(eom_fixtures["good"])
+    paragraph = heading(document)
+    paragraph.runs[0].text = "Перелік таблиць"
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    if context == "toc_cache":
+        previous = paragraph.insert_paragraph_before()
+        field_marker(previous, "begin")
+        field_instruction(previous, " TOC ")
+        field_marker(previous, "separate")
+        following = document.add_paragraph()
+        paragraph._p.addnext(following._p)
+        field_marker(following, "end")
+    elif context == "numbering":
+        paragraph._p.get_or_add_pPr().get_or_add_numPr().get_or_add_numId().val = 1
+    else:
+        name = {"caption": "Caption", "program": "ЕОМ: Програма", "generic_heading": "Heading 2"}[
+            context
+        ]
+        style = (
+            document.styles[name]
+            if name in document.styles
+            else document.styles.add_style(name, WD_STYLE_TYPE.PARAGRAPH)
+        )
+        style.base_style = paragraph.style
+        paragraph.style = style
+    original = packed(document)
+    result = fix_document_bytes(original, load_ruleset())
+    found = [f for f in result.before.findings if f.rule_id == "R06"]
+    assert len(found) == 1 and found[0].severity == "manual"
+    assert result.document_bytes == original and result.applied_rules == ()
+
+
+def test_structural_style_identity_is_read_from_rule_data(eom_fixtures, body_check):
+    document = Document(eom_fixtures["good"])
+    paragraph = heading(document)
+    paragraph.runs[0].text = "Інша структурна частина"
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    style = document.styles.add_style("Synthetic Configured Structural", WD_STYLE_TYPE.PARAGRAPH)
+    style.base_style = paragraph.style
+    paragraph.style = style
+    params = dict(load_ruleset().rules[5].params, style=style.name)
+    found = [
+        item
+        for item in body_check(document, "R06", parameters=params)
+        if item.location.paragraph == 2
+    ]
+    assert len(found) == 1 and found[0].actual == {"align": "center"}
+
+
+def test_empty_structural_style_paragraph_is_not_a_required_heading(eom_fixtures, body_check):
+    document = Document(eom_fixtures["good"])
+    paragraph = heading(document)
+    paragraph.runs[0].text = " "
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    assert body_check(document, "R06") == ()
+
+
+@pytest.mark.parametrize("opaque", ["symbol", "empty_field"])
+def test_structural_style_without_literal_text_keeps_opaque_output_manual(eom_fixtures, opaque):
+    document = Document(eom_fixtures["good"])
+    paragraph = heading(document)
+    paragraph.runs[0].text = ""
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    if opaque == "symbol":
+        symbol = OxmlElement("w:sym")
+        symbol.set(qn("w:font"), "Symbol")
+        symbol.set(qn("w:char"), "F041")
+        paragraph.runs[0]._r.append(symbol)
+    else:
+        field = OxmlElement("w:fldSimple")
+        field.set(qn("w:instr"), "REF SyntheticHeading")
+        paragraph._p.append(field)
+    original = packed(document)
+    result = fix_document_bytes(original, load_ruleset())
+    found = [f for f in result.before.findings if f.rule_id == "R06"]
+    assert len(found) == 1 and found[0].severity == "manual"
+    assert result.document_bytes == original
 
 
 def test_structural_names_are_read_from_ruleset_data(eom_fixtures):

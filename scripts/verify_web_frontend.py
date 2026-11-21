@@ -91,6 +91,18 @@ try {
     'Default mode not transmitted');
   events.length = 0;
   mount(fixture.before);
+  let manual = document.querySelector('#manual');
+  assert(manual.tagName === 'DETAILS' && !manual.open, 'Manual block is not initially closed');
+  assert(document.querySelector('#manual-title').textContent === 'Перевірте самі',
+    'Manual block title');
+  assert(!document.querySelector('#manual .finding').checkVisibility(),
+    'Closed disclosure exposes manual finding cards');
+  const manualLink = document.querySelector('.summary a[href="#manual"]');
+  manualLink.click();
+  assert(manual.open && document.activeElement === manual.querySelector('summary'),
+    'Manual anchor did not open and focus the disclosure');
+  manual.querySelector('summary').click();
+  assert(!manual.open, 'Native disclosure does not close');
   assert(document.querySelector('#findings').textContent.includes('R02'),
     'Original report missing');
   for (const rule of ['R03', 'R04', 'R05']) {
@@ -100,6 +112,14 @@ try {
   click('Переглянути виправлену копію');
   assert(events.at(-1).event === 'reveal', 'Reveal trigger not delivered');
   mount(fixture.after);
+  manual = document.querySelector('#manual');
+  assert(!manual.open, 'New report retained the previous manual disclosure state');
+  const manualRule = manual.querySelector('.manual-group');
+  assert(manualRule && !manualRule.open, 'Manual rules are not compact disclosures');
+  manual.querySelector('summary').click();
+  manualRule.querySelector('summary').click();
+  assert(manualRule.querySelector('.finding').checkVisibility(), 'Expanded manual evidence hidden');
+  manual.open = false;
   assert(!document.querySelector('#findings').textContent.includes('R02'), 'Fixed error retained');
   for (const rule of ['R03', 'R04', 'R05']) {
     assert(!document.querySelector('#findings').textContent.includes(rule),
@@ -116,6 +136,7 @@ try {
   const previousUrl = link.href;
   const previousCleanup = cleanup;
   mount(fixture.after);
+  assert(!document.querySelector('#manual').open, 'Repeated report is not initially closed');
   previousCleanup();
   link = document.querySelector('a.app-download');
   assert(link && link.href !== previousUrl, 'Old cleanup erased the current render');

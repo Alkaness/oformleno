@@ -48,6 +48,40 @@ def body_text(tree):
     return tree.find("body").text_content()
 
 
+def test_manual_findings_have_one_secondary_closed_disclosure_and_keep_all_evidence():
+    manuals = [
+        finding(
+            severity="manual",
+            fixable=False,
+            location=Location(paragraph=index, excerpt=f"Згенерований уривок {index}."),
+            message=f"Згенерована причина {index}.",
+            quote=f"Згенерована цитата {index}.",
+        )
+        for index in range(1, 38)
+    ]
+    manuals.append(finding(rule_id="M01", severity="manual", fixable=False))
+    value = report(finding(), *manuals)
+    original = value.model_dump_json()
+    tree = parsed(value)
+    disclosure = tree.get_element_by_id("manual")
+    assert disclosure.tag == "details" and "open" not in disclosure.attrib
+    summary = disclosure.find("summary")
+    assert summary is not None and "Перевірте самі" in summary.text_content()
+    assert "38" in summary.text_content()
+    assert len(disclosure.xpath('.//div[@class="finding"]')) == 38
+    assert len(tree.xpath('//*[@id="findings"]//div[@class="finding"]')) == 1
+    assert not tree.xpath('//nav//a[@href="#manual"]')
+    groups = disclosure.xpath('.//details[contains(@class,"manual-group")]')
+    assert len(groups) == 2 and all("open" not in group.attrib for group in groups)
+    assert not disclosure.xpath('.//article[contains(@class,"rule-group")]')
+    for item in manuals:
+        assert item.message in disclosure.text_content()
+        assert item.quote in disclosure.text_content()
+        if item.location.excerpt:
+            assert item.location.excerpt in disclosure.text_content()
+    assert value.model_dump_json() == original
+
+
 def test_readable_locations_values_and_exact_source_evidence():
     item = finding(
         location=Location(section=2, paragraph=12, page=4, excerpt="Згенерований уривок."),
@@ -78,15 +112,18 @@ def test_groups_each_rule_once_without_losing_locations_or_severities():
     assert len(groups[0].xpath('.//div[@class="finding"]')) == 2
     assert "Секція 1" in groups[0].text_content() and "Секція 3" in groups[0].text_content()
     assert "Попередження" in groups[0].text_content()
-    assert len(tree.xpath('//*[@id="manual"]//article')) == 1
+    assert len(tree.xpath('//*[@id="manual"]//details[contains(@class,"manual-group")]')) == 1
     text = tree.xpath("//aside")[0].text_content()
     assert "Знайдено 2 помилки, 1 можна виправити автоматично." in text
-    assert "Попередження: 1" in text and "Перевірте вручну: 1" in text
+    assert "Попередження: 1" in text and "Перевірте самі: 1" in text
 
 
-def test_all_untrusted_content_is_text_and_never_attributes_or_executable_html():
+@pytest.mark.parametrize("severity", ["error", "manual"])
+def test_all_untrusted_content_is_text_and_never_attributes_or_executable_html(severity):
     hostile = '"><img src="https://invalid.example/x" onerror="alert(1)"><script>x</script>&'
     item = finding(
+        severity=severity,
+        fixable=False,
         rule_id=hostile,
         rule_name=hostile,
         message=hostile,
@@ -116,6 +153,21 @@ def test_all_untrusted_content_is_text_and_never_attributes_or_executable_html()
     assert "<script>alert(1)</script>" in body_text(tree)
     assert hostile not in tree.find("head").text_content()
     assert all(hostile not in attr for node in tree.iter() for attr in node.attrib.values())
+
+
+@pytest.mark.parametrize("count", [7, 1357])
+def test_manual_grouping_never_truncates_large_reports(count):
+    items = [
+        finding(severity="manual", fixable=False, location=Location(paragraph=index))
+        for index in range(1, count + 1)
+    ]
+    tree = parsed(report(*items))
+    disclosure = tree.get_element_by_id("manual")
+    assert "open" not in disclosure.attrib
+    assert f"Висновків: {count}" in disclosure.find("summary").text_content()
+    assert len(disclosure.xpath('.//div[@class="finding"]')) == count
+    locations = disclosure.xpath('.//p[@class="location"]/text()')
+    assert locations == [f"Абзац {index}" for index in range(1, count + 1)]
 
 
 @pytest.mark.parametrize(
@@ -177,7 +229,7 @@ def test_real_engine_checklist_applicability_and_quotes(eom_fixtures, document_t
     assert f"Пункти переліку ЕОМ: {count}. Інші ручні висновки: 0." in text
     assert "Перевірку не завершено: потрібен ручний перегляд." in text
     assert "Повний нормоконтроль потребує окремого перегляду." in text
-    manual = tree.xpath('//*[@id="manual"]//article')
+    manual = tree.xpath('//*[@id="manual"]//details[contains(@class,"manual-group")]')
     assert len(manual) == count
     assert all(item.quote in text and item.message in text for item in result.findings)
     for group in manual:
@@ -224,7 +276,7 @@ def test_report_after_fix_uses_remaining_counts_and_keeps_manual_review(eom_fixt
         "Знайдено 0 помилок, 0 можна виправити автоматично."
         in after.xpath("//aside")[0].text_content()
     )
-    assert len(after.xpath('//*[@id="manual"]//article')) == 7
+    assert len(after.xpath('//*[@id="manual"]//details[contains(@class,"manual-group")]')) == 7
     assert "потрібен ручний перегляд" in body_text(after)
 
 
