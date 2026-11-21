@@ -1,5 +1,24 @@
 # Current user decisions
 
+- **T024 publication verified (2026-11-21).** Audited25 source/test/Markdown
+  paths only; no student docs/private/tmp artifacts or scanned credential/email
+  patterns. Mandatory hook passed document guard/Ruff/format/931pytest on
+  Python3.12.3. Normal push published source93e47bbe67e2a041ef8219d4ceecca8cbd527a23
+  to existingpublic001-mvp-checker; exact-SHA CI44907188105 completed/success.
+  Actual anonymous hosted generated-document run at13:09:52UTC passed:
+  12errors/11fixable/7manual ->1R08/0fixable/7manual, ordinarydefault, closed
+  manualgroups, anchoropen/focus, nested evidence, rerenderclosed, actualclicked
+  downloadmatchesBlob, savedDOCXreopened, newmathTNR/structuraljustifyverified,
+  text/fields/tables/non-mainZIPpreserved, inputimmutable, reset/revocation,
+  mobileuploadcontrol. Onlysyntheticdocs uploaded. Firstunfocusedanchorprobe
+  and secondlocalXMLvalidatorerror archived separately; Page.bringToFront and
+  canonicalserialization fixed the probe, no product changes. ThirdfullPASS
+  at tmp/t024/hosted-browser-evidence.json. No userCloudreboot needed; no direct
+  hostedGitSHA endpoint, only observed newbehavior afterbranchpush. Record:
+  specs/001-mvp-checker/feedback-release-verification.md. Historicalindependent
+  23/38recall and reused38/38regression remain distinct; genericTasteFAIL30
+  remains unchanged/disclosed. Final documentation publication and its CI are
+  within this authorized release; no new feature/design/research task follows.
 - **Publication continuation authorized (2026-11-21).** User said “continue”
   immediately after the completed T022/T023 result and “Ready for commit and
   push.” Proceed with publication of the reviewed T021/T021a/T022/T023 source,
